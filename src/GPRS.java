@@ -1,6 +1,6 @@
 public class GPRS {
 
-    public static byte[] gprs = new byte[16];
+    public static short[] gprs = new short[16];
 
     public void show_in_decimal(int index){
         for(int i = 0 ; i < 16; i++)

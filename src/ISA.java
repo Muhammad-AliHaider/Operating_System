@@ -1,5 +1,9 @@
 public class ISA {
 
+
+    public short byte_short(byte a , byte b){
+        return (short)(Integer.parseInt(String.valueOf(a  + 256)) + Integer.parseInt(String.valueOf(b  + 256)));
+    }
     public void Reset_carryBit() {
         SPRs.set_flag(4);
     }
@@ -184,13 +188,59 @@ public class ISA {
     }
 
 
-    public void MOVL(String R1) {
+//    public void MOVL(String R1) {
+//        int index_1 = Integer.parseInt(R1);
+//
+//        GPRS.gprs[index_1 - 1] = Byte.valueOf((byte) (Memory.memory[Memory.pc] + Memory.memory[Memory.pc + 1])); // issue is how to put 2 bytes in 1 byte instance of an array gprs
+//    }
+
+
+    public void MOVL(String R1 , int x )// x shouldnt be a multiple of 2 (add check)
+    {
         int index_1 = Integer.parseInt(R1);
 
-        GPRS.gprs[index_1 - 1] = Byte.valueOf((byte) (Memory.memory[Memory.pc] + Memory.memory[Memory.pc + 1])); // issue is how to put 2 bytes in 1 byte instance of an array gprs
+        GPRS.gprs[index_1 - 1] = byte_short( Memory.memory[Memory.pc + x], Memory.memory[Memory.pc +x + 1]);
+    }
+
+    public void MOVS(String R1, int offset )
+    {
+        int index_1 = Integer.parseInt(R1);
+        String temp = String.valueOf(GPRS.gprs[index_1 - 1]);
+        String[] arr = new String[temp.length()];
+        for (int i = 0; i < temp.length(); i++) {
+            arr = temp.split("");
+        }
+        String s1 = "";
+        String s2 = "";
+        switch (arr.length) {
+            case 1:
+                s1 = "00";
+                s2 = "0" + arr[0];
+                break;
+
+            case 2:
+                s1 = "00";
+                s2 = arr[0] + arr[1];
+                break;
+            case 3:
+                s1 = "0" + arr[0];
+                s2 = arr[1] + arr[2];
+                break;
+            case 4:
+                s1 = arr[0] + arr[1];
+                s2 = arr[2] + arr[3];
+                break;
+        }
+
+        Memory.memory[Memory.pc + offset] = Byte.valueOf(s1);
+        Memory.memory[Memory.pc + offset+ 1] = Byte.valueOf(s2);
+
+        setting_flag(GPRS.gprs[index_1-1]);
     }
 
 
-    
+
+
+
 }
 
