@@ -35,9 +35,9 @@ public class ISA {
     }
 
     public void setting_flag(int index) {
-        if (GPRS.gprs[index] < 0) {
+        if (Short.toUnsignedInt(GPRS.gprs[index]) < 0) {
             set_SignBit();
-        } else if (GPRS.gprs[index] == 0) {
+        } else if (Short.toUnsignedInt(GPRS.gprs[index]) == 0) {
             set_ZeroBit();
         }
     }
@@ -307,6 +307,26 @@ public class ISA {
             GPRS.gprs[index_1-1] =  (short)((GPRS.gprs[index_1-1]>>1));
         }
     }
+
+    public void INC(String R1){
+        Reset_carryBit();
+        int index_1 = Integer.parseInt(R1);
+        if((GPRS.gprs[index_1-1]&0xFFFF) == 0xFFFF)
+            set_overflowBit();
+        else
+        GPRS.gprs[index_1-1] = (short)(Short.toUnsignedInt(GPRS.gprs[index_1-1]) + 1);
+
+        setting_flag(index_1 - 1);
+    }
+
+    public void DEC(String R1){
+        Reset_carryBit();
+        int index_1 = Integer.parseInt(R1);
+        GPRS.gprs[index_1-1] = (short)(Short.toUnsignedInt(GPRS.gprs[index_1-1]) - 1);
+
+        setting_flag(index_1 - 1);
+    }
+
 
 
 
