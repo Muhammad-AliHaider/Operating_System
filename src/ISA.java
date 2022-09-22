@@ -327,6 +327,10 @@ public class ISA {
         setting_flag(index_1 - 1);
     }
 
+    public void NOOP()
+    {
+    }
+
 
 
 

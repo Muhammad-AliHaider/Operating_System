@@ -170,9 +170,9 @@ public class Main {
 //                    operations.DEC(mem.mem_hex[mem.pc]);
 //                    mem.pc += 1;
 //                    break;
-//                case "f2":
-//                    operations.NOOP();
-//                    mem.pc++;
+                case "f2":
+                    operations.NOOP();
+                    mem.pc++;
 //                case "f3":
 //                    GPR gpr = new GPR();
 //                    System.out.println("General Purpose Registers\nDecimal Registers");
