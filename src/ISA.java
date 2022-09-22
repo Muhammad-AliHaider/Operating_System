@@ -121,7 +121,7 @@ public class ISA {
         }
     }
 
-    public void Subi(String R1, byte num) {
+    public void Subi(String R1, short num) {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
 
@@ -130,7 +130,7 @@ public class ISA {
 
     }
 
-    public void Muli(String R1, byte num) {
+    public void Muli(String R1, short num) {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
         if (GPRS.gprs[index_1 - 1] * num > 65536) {
@@ -141,7 +141,7 @@ public class ISA {
         }
     }
 
-    public void Divi(String R1, byte num) {
+    public void Divi(String R1, short num) {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
 
@@ -150,7 +150,7 @@ public class ISA {
 
     }
 
-    public void Andi(String R1, byte num) {
+    public void Andi(String R1, short num) {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
 
@@ -159,7 +159,7 @@ public class ISA {
 
     }
 
-    public void Ori(String R1, byte num) {
+    public void Ori(String R1, short num) {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
 
@@ -169,31 +169,31 @@ public class ISA {
     }
 
 
-    public void BZ(byte num) {
+    public void BZ(short num) {
         if (SPRs.get_flag() == 1) {
             Memory.pc = Memory.jc + num;
         }
     }
 
-    public void BNZ(byte num) {
+    public void BNZ(short num) {
         if (SPRs.get_flag() != 1) {
             Memory.pc = Memory.jc + num;
         }
     }
 
-    public void BC(byte num) {
+    public void BC(short num) {
         if (SPRs.get_flag() == 0) {
             Memory.pc = Memory.jc + num;
         }
     }
 
-    public void BS(byte num) {
+    public void BS(short num) {
         if (SPRs.get_flag() == 0) {
             Memory.pc = Memory.jc + num;
         }
     }
 
-    public void JMP(byte num) {
+    public void JMP(short num) {
         Memory.pc = Memory.jc + num;
     }
 
