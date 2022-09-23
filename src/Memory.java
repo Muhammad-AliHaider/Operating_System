@@ -1,7 +1,7 @@
 public class Memory {
     public static byte[] memory = new byte[65536];
 
-    public static int pc;
+    public static int pc = 0;
 
     public static int cc;
 

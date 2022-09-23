@@ -1,3 +1,5 @@
+import javax.print.attribute.SetOfIntegerSyntax;
+import java.awt.image.MemoryImageSource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigInteger;
@@ -20,159 +22,179 @@ public class Main {
 //        }
         String opcode = "";
         //setting program counter to the code base
-        mem.pc = mem.cb;
+        Memory.cb = Memory.pc;
         //read the file and saved it's contents in the memory
-        Scanner in = new Scanner(new File("p1.txt"));
+        Scanner in = new Scanner(new File("E:\\projects\\OS_project\\src\\p1.txt"));
         while (in.hasNext()) {
             byte a = (byte) in.nextInt();
             //coverting integer into hexa decimal
-            mem.mem_hex[mem.cc] = Integer.toHexString(a & 0xFF);
+//            Memory.memory[Memory.cc] = Integer.toHexString(a & 0xFF);
+            Memory.memory[Memory.cc] = a;
             //hex values --> 30 01 00 01 30 02 7f ff 19 01 02 f3
-            mem.cc++;
+            Memory.cc++;
         }
 
         opcode = "";
         //setting program counter to the code base
-        mem.pc = mem.cb;
+        Memory.pc = Memory.cb;
+        Memory.cb = Memory.cc;
+        SPRs.code_reg[0] =(byte) Memory.cb;
+//        SPRs.code_reg[2] = (byte) Memory.cc;
         //while program counter is less thabn the code couter or it does not encounter terminate operation
         //memory reading continues
-        while (!(mem.pc >= mem.cc) || !(mem.mem_hex[mem.pc].equals("f3"))) {
-            opcode = mem.mem_hex[mem.pc];
+        while (!(Memory.pc >= Memory.cc) || !(Memory.memory[Memory.pc] == (byte)Byte.parseByte("f3"))){
+            opcode = Integer.toHexString(Memory.memory[Memory.pc] & 0xFF);
+
+            System.out.println(opcode);
             switch (opcode) {
                 //whichever instruction is found in the memory, its switch case is run and program counter is
                 //incremmented accordingly
                 case "16":
-                    mem.pc++;
-                    operations.Move(mem.mem_hex[mem.pc], mem.mem_hex[mem.pc + 1]);
+                    Memory.pc++;
+                    operations.Move(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
                     //pc is incrememnted by two to jump on the next instruction
-                    mem.pc += 2;
+                    Memory.pc += 2;
                     break;
                 case "17":
-                    mem.pc++;
-                    operations.Add(mem.mem_hex[mem.pc], mem.mem_hex[mem.pc + 1]);
-                    mem.pc += 2;
+                    Memory.pc++;
+                    operations.Add(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
+                    Memory.pc += 2;
                     break;
                 case "18":
-                    mem.pc++;
-                    operations.Sub(mem.mem_hex[mem.pc], mem.mem_hex[mem.pc + 1]);
-                    mem.pc += 2;
+                    Memory.pc++;
+                    operations.Sub(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
+                    Memory.pc += 2;
                     break;
                 case "19":
-                    mem.pc++;
-                    operations.Mul(mem.mem_hex[mem.pc], mem.mem_hex[mem.pc + 1]);
-                    mem.pc += 2;
+                    Memory.pc++;
+                    operations.Mul(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
+                    System.out.println(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF));
+                    System.out.println(Integer.toHexString(Memory.memory[Memory.pc+1] & 0xFF));
+                    Memory.pc += 2;
                     break;
                 case "1A":
-                    mem.pc++;
-                    operations.Div(mem.mem_hex[mem.pc], mem.mem_hex[mem.pc + 1]);
-                    mem.pc += 2;
+                    Memory.pc++;
+                    operations.Div(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
+                    Memory.pc += 2;
                     break;
                 case "1B":
-                    mem.pc++;
-                    operations.And(mem.mem_hex[mem.pc], mem.mem_hex[mem.pc + 1]);
-                    mem.pc += 2;
+                    Memory.pc++;
+                    operations.And(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
+                    Memory.pc += 2;
                     break;
                 case "1C":
-                    mem.pc++;
-                    operations.Or(mem.mem_hex[mem.pc], mem.mem_hex[mem.pc + 1]);
-                    mem.pc += 2;
+                    Memory.pc++;
+                    operations.Or(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
+                    Memory.pc += 2;
                     break;
-//                case "30":
-//                    mem.pc++;
-//                    operations.MOVI(mem.mem_hex[mem.pc], (short) Integer.parseInt(mem.mem_hex[mem.pc + 1] + mem.mem_hex[mem.pc + 2], 16));
-//                    mem.pc += 3;
-//                    break;
+                case "30":
+                    Memory.pc++;
+                    operations.Movi(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1] & 0xFF) )+ Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2] & 0xFF))));
+                    Memory.pc += 3;
+                    break;
                 case "31":
-                    mem.pc++;
-                    operations.Addi(mem.mem_hex[mem.pc], (short) Integer.parseInt(mem.mem_hex[mem.pc + 1] + mem.mem_hex[mem.pc + 2]));
-                    mem.pc += 3;
+                    Memory.pc++;
+                    operations.Addi(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1]& 0xFF)) + Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2]& 0xFF))));
+                    Memory.pc += 3;
                     break;
                 case "32":
-                    mem.pc++;
-                    operations.Subi(mem.mem_hex[mem.pc], (short) Integer.parseInt(mem.mem_hex[mem.pc + 1] + mem.mem_hex[mem.pc + 2]));
-                    mem.pc += 3;
+                    Memory.pc++;
+                    operations.Subi(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1]& 0xFF)) + Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2]& 0xFF))));
+                    Memory.pc += 3;
                     break;
                 case "33":
-                    mem.pc++;
-                    operations.Muli(mem.mem_hex[mem.pc], (short) Integer.parseInt(mem.mem_hex[mem.pc + 1] + mem.mem_hex[mem.pc + 2], 16));
-                    mem.pc += 3;
+                    Memory.pc++;
+                    operations.Muli(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1]& 0xFF)) + Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2]& 0xFF))));
+                    Memory.pc += 3;
                     break;
                 case "34":
-                    mem.pc++;
-                    operations.Divi(mem.mem_hex[mem.pc], (short) Integer.parseInt(mem.mem_hex[mem.pc + 1] + mem.mem_hex[mem.pc + 2], 16));
-                    mem.pc += 3;
+                    Memory.pc++;
+                    operations.Divi(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1]& 0xFF)) + Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2]& 0xFF))));
+                    Memory.pc += 3;
                     break;
                 case "35":
-                    mem.pc++;
-                    operations.Andi(mem.mem_hex[mem.pc], (short) Integer.parseInt(mem.mem_hex[mem.pc + 1] + mem.mem_hex[mem.pc + 2], 16));
-                    mem.pc += 3;
+                    Memory.pc++;
+                    operations.Andi(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1]& 0xFF)) + Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2]& 0xFF))));
+                    Memory.pc += 3;
                     break;
                 case "36":
-                    mem.pc++;
-                    operations.Ori(mem.mem_hex[mem.pc], (short) Integer.parseInt(mem.mem_hex[mem.pc + 1] + mem.mem_hex[mem.pc + 2]));
-                    mem.pc += 3;
+                    Memory.pc++;
+                    operations.Ori(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1]& 0xFF)) + Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2]& 0xFF))));
+                    Memory.pc += 3;
                     break;
-//                case "37":
-//                    mem.pc++;
-//                    operations.BZ((short) Integer.parseInt(mem.mem_hex[mem.pc], 16));
-//                case "38":
-//                    mem.pc++;
-//                    operations.BNZ((short) Integer.parseInt(mem.mem_hex[mem.pc], 16));
-//                case "39":
-//                    mem.pc++;
-//                    operations.BC((short) Integer.parseInt(mem.mem_hex[mem.pc], 16));
-//                case "3A":
-//                    mem.pc++;
-//                    operations.BS((short) Integer.parseInt(mem.mem_hex[mem.pc], 16));
-//                case "3B":
-//                    mem.pc++;
-//                    operations.JMP((short) Integer.parseInt(Memory.mem_hex[Memory.pc], 16));
-//                    mem.pc++;
+                case "37":
+                    Memory.pc++;
+                    operations.BZ((short)(Byte.toUnsignedInt(Memory.memory[Memory.pc])));
+                case "38":
+                    Memory.pc++;
+                    operations.BNZ((short)(Byte.toUnsignedInt(Memory.memory[Memory.pc])));
+                case "39":
+                    Memory.pc++;
+                    operations.BC((short)(Byte.toUnsignedInt(Memory.memory[Memory.pc])));
+                case "3A":
+                    Memory.pc++;
+                    operations.BS((short)(Byte.toUnsignedInt(Memory.memory[Memory.pc])));
+                case "3B":
+                    Memory.pc++;
+                    operations.JMP((short)(Byte.toUnsignedInt(Memory.memory[Memory.pc])));
+                    Memory.pc++;
 //                case "3D":
-//                    mem.pc++;
-//                    operations.Act((short) (Integer.parseInt(mem.mem_hex[mem.pc])));
-//                    mem.pc++;
-//                case "51":
-//                    mem.pc++;
-//                    operations.MOVL(mem.mem_hex[mem.pc]);
-//                    mem.pc++;
-//                case "52":
-//                    mem.pc++;
-//                    operations.MOVS(mem.mem_hex[mem.pc]);
-//                    mem.pc++;
+//                    Memory.pc++;
+//                    operations.Act((short) (Integer.parseInt(mem.mem_hex[Memory.pc])));
+//                    Memory.pc++;
+                case "51":
+                    Memory.pc++;
+                    operations.MOVL(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF),(Memory.memory[Memory.pc] & 0xFF));
+                    Memory.pc++;
+                    Memory.pc++;
+                case "52":
+                    Memory.pc++;
+                    operations.MOVS(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF),(Memory.memory[Memory.pc] & 0xFF));
+                    Memory.pc++;
+                    Memory.pc++;
 //                case "71":
-//                    mem.pc++;
-//                    operations.SHL(mem.mem_hex[mem.pc]);
-//                    mem.pc += 1;
+//                    Memory.pc++;
+//                    operations.SHL(mem.mem_hex[Memory.pc]);
+//                    Memory.pc += 1;
 //                    break;
 //                case "72":
-//                    mem.pc++;
-//                    operations.SHR(mem.mem_hex[mem.pc]);
-//                    mem.pc += 1;
+//                    Memory.pc++;
+//                    operations.SHR(mem.mem_hex[Memory.pc]);
+//                    Memory.pc += 1;
 //                    break;
 //                case "73":
-//                    mem.pc++;
-//                    operations.RTL(mem.mem_hex[mem.pc]);
-//                    mem.pc += 1;
+//                    Memory.pc++;
+//                    operations.RTL(mem.mem_hex[Memory.pc]);
+//                    Memory.pc += 1;
 //                    break;
 //                case "74":
-//                    mem.pc++;
-//                    operations.RTR(mem.mem_hex[mem.pc]);
-//                    mem.pc += 1;
+//                    Memory.pc++;
+//                    operations.RTR(mem.mem_hex[Memory.pc]);
+//                    Memory.pc += 1;
 //                    break;
 //                case "75":
-//                    mem.pc++;
-//                    operations.INC(mem.mem_hex[mem.pc]);
-//                    mem.pc += 1;
+//                    Memory.pc++;
+//                    operations.INC(mem.mem_hex[Memory.pc]);
+//                    Memory.pc += 1;
 //                    break;
 //                case "76":
-//                    mem.pc++;
-//                    operations.DEC(mem.mem_hex[mem.pc]);
-//                    mem.pc += 1;
+//                    Memory.pc++;
+//                    operations.DEC(mem.mem_hex[Memory.pc]);
+//                    Memory.pc += 1;
 //                    break;
                 case "f2":
                     operations.NOOP();
-                    mem.pc++;
+                    Memory.pc++;
+                    break;
+                case "f3":
+                    System.out.println("----------------------------------------------------------------------------------------------------");
+                    System.out.println("SPRS");
+                    GPRS.show_in_decimal();
+                    System.out.println("----------------------------------------------------------------------------------------------------");
+                    System.out.println("GPRS");
+                    SPRs.display_sprs();
+                    System.exit(0);
+                    break;
 //                case "f3":
 //                    GPR gpr = new GPR();
 //                    System.out.println("General Purpose Registers\nDecimal Registers");

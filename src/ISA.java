@@ -44,11 +44,12 @@ public class ISA {
 
     public void Move(String R1, String R2) {
         Reset_carryBit(); // if negative and carry then?????
+//        System.out.println("abc");
         int index_1 = Integer.parseInt(R1);
         int index_2 = Integer.parseInt(R2);
 
-        GPRS.gprs[index_1 - 1] = GPRS.gprs[index_2 - 1];
-        setting_flag(index_2 - 1);
+        GPRS.gprs[index_1 ] = GPRS.gprs[index_2 ];
+        setting_flag(index_2 );
     }
 
     public void Add(String R1, String R2) {
@@ -77,11 +78,11 @@ public class ISA {
         int index_1 = Integer.parseInt(R1);
         int index_2 = Integer.parseInt(R2);
 
-        if ((Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) * Short.toUnsignedInt(GPRS.gprs[index_2 - 1])) > 65536) {
+        if ((Short.toUnsignedInt(GPRS.gprs[index_1 ]) * Short.toUnsignedInt(GPRS.gprs[index_2 ])) > 65536) {
             set_overflowBit();
         } else {
-            GPRS.gprs[index_1 - 1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) * Short.toUnsignedInt(GPRS.gprs[index_2 - 1]));
-            setting_flag(index_1 - 1);
+            GPRS.gprs[index_1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1]) * Short.toUnsignedInt(GPRS.gprs[index_2]));
+            setting_flag(index_1);
         }
     }
 
@@ -109,6 +110,14 @@ public class ISA {
         GPRS.gprs[index_1 - 1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) | Short.toUnsignedInt(GPRS.gprs[index_2 - 1]));
         setting_flag(index_1 - 1);
     }
+
+    public void Movi(String R1,short num){
+        Reset_carryBit(); // if negative and carry then?????
+        int index_1 = Integer.parseInt(R1);
+        GPRS.gprs[index_1 ] = (short) (Short.toUnsignedInt(num));
+        setting_flag(index_1 );
+    }
+
 
     public void Addi(String R1, short num) {
         Reset_carryBit(); // if negative and carry then?????
@@ -209,7 +218,7 @@ public class ISA {
     {
         int index_1 = Integer.parseInt(R1);
 
-        GPRS.gprs[index_1 - 1] = byte_short( Memory.memory[Memory.pc + x], Memory.memory[Memory.pc +x + 1]);
+        GPRS.gprs[index_1 - 1] = byte_short( Memory.memory[ SPRs.code_reg[2] + x], Memory.memory[SPRs.code_reg[2] +x + 1]);
     }
 
     public void MOVS(String R1, int offset )
@@ -243,8 +252,10 @@ public class ISA {
                 break;
         }
 
-        Memory.memory[Memory.pc + offset] = Byte.valueOf(s1);
-        Memory.memory[Memory.pc + offset+ 1] = Byte.valueOf(s2);
+        Memory.memory[SPRs.code_reg[2] + offset] = Byte.valueOf(s1);
+        SPRs.code_reg[2]++;
+        Memory.memory[SPRs.code_reg[2] + offset+ 1] = Byte.valueOf(s2);
+        SPRs.code_reg[2]++;
 
         setting_flag(GPRS.gprs[index_1-1]);
     }
