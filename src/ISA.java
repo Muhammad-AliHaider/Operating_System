@@ -171,30 +171,30 @@ public class ISA {
 
     public void BZ(short num) {
         if (SPRs.get_flag() == 1) {
-            Memory.pc = Memory.jc + num;
+            Memory.cc =Memory.cc + num;
         }
     }
 
     public void BNZ(short num) {
         if (SPRs.get_flag() != 1) {
-            Memory.pc = Memory.jc + num;
+            Memory.cc = Memory.cc + num;
         }
     }
 
     public void BC(short num) {
         if (SPRs.get_flag() == 0) {
-            Memory.pc = Memory.jc + num;
+            Memory.cc = Memory.cc + num;
         }
     }
 
     public void BS(short num) {
         if (SPRs.get_flag() == 0) {
-            Memory.pc = Memory.jc + num;
+            Memory.cc = Memory.cc + num;
         }
     }
 
     public void JMP(short num) {
-        Memory.pc = Memory.jc + num;
+        Memory.cc = Memory.cc + num;
     }
 
 
