@@ -1,3 +1,5 @@
+import java.lang.management.MemoryPoolMXBean;
+
 public class ISA {
 
 
@@ -14,6 +16,7 @@ public class ISA {
 
         return (short)(Byte.toUnsignedInt(a) + Byte.toUnsignedInt(b));
     }
+
     public void Reset_carryBit() {
         SPRs.set_flag(4);
     }
@@ -57,11 +60,11 @@ public class ISA {
         int index_1 = Integer.parseInt(R1);
         int index_2 = Integer.parseInt(R2);
 
-        if (Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) + Short.toUnsignedInt(GPRS.gprs[index_2 - 1]) > 65536) {
+        if (Short.toUnsignedInt(GPRS.gprs[index_1]) + Short.toUnsignedInt(GPRS.gprs[index_2]) > 65536) {
             set_overflowBit();
         } else {
-            GPRS.gprs[index_1 - 1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) + Short.toUnsignedInt(GPRS.gprs[index_2 - 1]));
-            setting_flag(index_1 - 1);
+            GPRS.gprs[index_1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1]) + Short.toUnsignedInt(GPRS.gprs[index_2]));
+            setting_flag(index_1);
         }
     }
 
@@ -69,8 +72,12 @@ public class ISA {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
         int index_2 = Integer.parseInt(R2);
-        GPRS.gprs[index_1 - 1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) + Short.toUnsignedInt(GPRS.gprs[index_2 - 1]));
-        setting_flag(index_1 - 1);
+        if (Short.toUnsignedInt(GPRS.gprs[index_1]) - Short.toUnsignedInt(GPRS.gprs[index_2]) < -65536) {
+            set_overflowBit();
+        } else {
+            GPRS.gprs[index_1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1]) - Short.toUnsignedInt(GPRS.gprs[index_2]));
+            setting_flag(index_1);
+        }
     }
 
     public void Mul(String R1, String R2) {
@@ -90,8 +97,8 @@ public class ISA {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
         int index_2 = Integer.parseInt(R2);
-        GPRS.gprs[index_1 - 1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) / Short.toUnsignedInt(GPRS.gprs[index_2 - 1]));
-        setting_flag(index_1 - 1);
+        GPRS.gprs[index_1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1]) / Short.toUnsignedInt(GPRS.gprs[index_2]));
+        setting_flag(index_1);
 
     }
 
@@ -99,16 +106,16 @@ public class ISA {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
         int index_2 = Integer.parseInt(R2);
-        GPRS.gprs[index_1 - 1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) & Short.toUnsignedInt(GPRS.gprs[index_2 - 1]));
-        setting_flag(index_1 - 1);
+        GPRS.gprs[index_1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1]) & Short.toUnsignedInt(GPRS.gprs[index_2]));
+        setting_flag(index_1);
     }
 
     public void Or(String R1, String R2) {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
         int index_2 = Integer.parseInt(R2);
-        GPRS.gprs[index_1 - 1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) | Short.toUnsignedInt(GPRS.gprs[index_2 - 1]));
-        setting_flag(index_1 - 1);
+        GPRS.gprs[index_1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1]) | Short.toUnsignedInt(GPRS.gprs[index_2 ]));
+        setting_flag(index_1);
     }
 
     public void Movi(String R1,short num){
@@ -122,31 +129,34 @@ public class ISA {
     public void Addi(String R1, short num) {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
-        if ((Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) + Short.toUnsignedInt(num)) > 65536) {
+        if ((Short.toUnsignedInt(GPRS.gprs[index_1]) + Short.toUnsignedInt(num)) > 65536) {
             set_overflowBit();
         } else {
-            GPRS.gprs[index_1 - 1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) + Short.toUnsignedInt(num));
-            setting_flag(index_1 - 1);
+            GPRS.gprs[index_1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1 ]) + Short.toUnsignedInt(num));
+            setting_flag(index_1);
         }
     }
 
     public void Subi(String R1, short num) {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
-
-        GPRS.gprs[index_1 - 1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) - Short.toUnsignedInt(num));
-        setting_flag(index_1 - 1);
+        if ((Short.toUnsignedInt(GPRS.gprs[index_1]) - Short.toUnsignedInt(num)) < -65536) {
+            set_overflowBit();
+        } else {
+            GPRS.gprs[index_1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1]) - Short.toUnsignedInt(num));
+            setting_flag(index_1);
+        }
 
     }
 
     public void Muli(String R1, short num) {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
-        if ((Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) * Short.toUnsignedInt(num)) > 65536) {
+        if ((Short.toUnsignedInt(GPRS.gprs[index_1]) * Short.toUnsignedInt(num)) > 65536) {
             set_overflowBit();
         } else {
-            GPRS.gprs[index_1 - 1] = (short) ((Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) * Short.toUnsignedInt(num)));
-            setting_flag(index_1 - 1);
+            GPRS.gprs[index_1] = (short) ((Short.toUnsignedInt(GPRS.gprs[index_1]) * Short.toUnsignedInt(num)));
+            setting_flag(index_1);
         }
     }
 
@@ -154,8 +164,8 @@ public class ISA {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
 
-        GPRS.gprs[index_1 - 1] = (short) ((Short.toUnsignedInt(GPRS.gprs[index_1 - 1]) / Short.toUnsignedInt(num)));
-        setting_flag(index_1 - 1);
+        GPRS.gprs[index_1 ] = (short) ((Short.toUnsignedInt(GPRS.gprs[index_1 ]) / Short.toUnsignedInt(num)));
+        setting_flag(index_1 );
 
     }
 
@@ -163,8 +173,8 @@ public class ISA {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
 
-        GPRS.gprs[index_1 - 1] = (short) (GPRS.gprs[index_1 - 1] & num);
-        setting_flag(index_1 - 1);
+        GPRS.gprs[index_1] = (short) (GPRS.gprs[index_1] & num);
+        setting_flag(index_1);
 
     }
 
@@ -172,46 +182,40 @@ public class ISA {
         Reset_carryBit(); // if negative and carry then?????
         int index_1 = Integer.parseInt(R1);
 
-        GPRS.gprs[index_1 - 1] = (short) (GPRS.gprs[index_1 - 1] * num);
-        setting_flag(index_1 - 1);
+        GPRS.gprs[index_1] = (short) (GPRS.gprs[index_1 ] | num);
+        setting_flag(index_1);
 
     }
 
 
     public void BZ(short num) {
         if (SPRs.get_flag() == 1) {
-            Memory.cc =Memory.cc + num;
+            Memory.pc =Memory.cb + num;
         }
     }
 
     public void BNZ(short num) {
-        if (SPRs.get_flag() != 1) {
-            Memory.cc = Memory.cc + num;
+        if (SPRs.get_flag() != 0x0002) {
+            Memory.pc = Memory.cb + num;
         }
     }
 
     public void BC(short num) {
-        if (SPRs.get_flag() == 0) {
-            Memory.cc = Memory.cc + num;
+        if (SPRs.get_flag() == 0x0001) {
+            Memory.pc = Memory.cb + num;
         }
     }
 
     public void BS(short num) {
-        if (SPRs.get_flag() == 0) {
-            Memory.cc = Memory.cc + num;
+        if (SPRs.get_flag() == 0x0004) {
+            Memory.pc = Memory.cb + num;
         }
     }
 
     public void JMP(short num) {
-        Memory.cc = Memory.cc + num;
+        Memory.pc = Memory.cb + num;
     }
 
-
-//    public void MOVL(String R1) {
-//        int index_1 = Integer.parseInt(R1);
-//
-//        GPRS.gprs[index_1 - 1] = Byte.valueOf((byte) (Memory.memory[Memory.pc] + Memory.memory[Memory.pc + 1])); // issue is how to put 2 bytes in 1 byte instance of an array gprs
-//    }
 
 
     public void MOVL(String R1 , int x )// x shouldnt be a multiple of 2 (add check)
@@ -252,22 +256,22 @@ public class ISA {
                 break;
         }
 
-        Memory.memory[SPRs.code_reg[2] + offset] = Byte.valueOf(s1);
-        SPRs.code_reg[2]++;
-        Memory.memory[SPRs.code_reg[2] + offset+ 1] = Byte.valueOf(s2);
-        SPRs.code_reg[2]++;
+        Memory.memory[SPRs.code_reg[1] + offset] = Byte.valueOf(s1);
+        Memory.pc++;
+        Memory.memory[SPRs.code_reg[1] + offset+ 1] = Byte.valueOf(s2);
+        Memory.pc++;
 
         setting_flag(GPRS.gprs[index_1-1]);
     }
 
     public void SHL(String R1){
         int index_1 = Integer.parseInt(R1);
-        if((GPRS.gprs[index_1-1] & 0x8000) == 0x8000 )
+        if((GPRS.gprs[index_1] & 0x8000) == 0x8000 )
         {
             set_carryBit();
         }
-        GPRS.gprs[index_1-1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1-1]) << 1);
-        setting_flag(index_1 - 1);
+        GPRS.gprs[index_1] = (short) (Short.toUnsignedInt(GPRS.gprs[index_1]) << 1);
+        setting_flag(index_1 );
     }
 
     public void SHR(String R1){
@@ -280,66 +284,67 @@ public class ISA {
 //            GPRS.gprs[index_1-1] = (short)(((GPRS.gprs[index_1-1] )  << 1)+32768);
 //        }
 
-        GPRS.gprs[index_1-1] = (short) ((short)(Short.toUnsignedInt(GPRS.gprs[index_1-1]) >> 1)& 0x0FFF); // ensures that the most sig bit is 0
-        setting_flag(index_1 - 1);
+        GPRS.gprs[index_1] = (short) ((short)(Short.toUnsignedInt(GPRS.gprs[index_1]) >> 1)& 0x0FFF); // ensures that the most sig bit is 0
+        setting_flag(index_1);
     }
 
     public void RTL(String R1){
         int index_1 = Integer.parseInt(R1);
-        if((GPRS.gprs[index_1-1] & 0x8000) == 0x8000 )
+        if((GPRS.gprs[index_1] & 0x8000) == 0x8000 )
         {
             set_carryBit();
         }
-        if(Short.toUnsignedInt(GPRS.gprs[index_1-1]) >=  32768){
+        if(Short.toUnsignedInt(GPRS.gprs[index_1]) >=  32768){
 //            set_carryBit();
-            GPRS.gprs[index_1-1] = (short)((GPRS.gprs[index_1-1] << 1)  + 1);
+            GPRS.gprs[index_1] = (short)((GPRS.gprs[index_1] << 1)  + 1);
         }
         else{
-            GPRS.gprs[index_1-1] = (short)(GPRS.gprs[index_1-1]<<1);
+            GPRS.gprs[index_1] = (short)(GPRS.gprs[index_1]<<1);
         }
-        setting_flag(index_1 -1);
+        setting_flag(index_1);
     }
 
     public void RTR(String R1){
         int index_1 = Integer.parseInt(R1);
         if(Short.toUnsignedInt(GPRS.gprs[index_1]) %2 == 1 && Short.toUnsignedInt(GPRS.gprs[index_1]) < 32768){
 //            System.out.println(Byte.toUnsignedInt((byte)((a>>1) + 32768)));
-            GPRS.gprs[index_1-1] = (short) (GPRS.gprs[index_1-1] + 32768);
+            GPRS.gprs[index_1] = (short) (GPRS.gprs[index_1] + 32768);
 //            a = (byte)((a >> 1)  + 128);
 //            System.out.println(a);
         }
         else if(Short.toUnsignedInt(GPRS.gprs[index_1]) >=32768 && Short.toUnsignedInt(GPRS.gprs[index_1]) %2 == 1 ){
-            GPRS.gprs[index_1-1] =  (short)((GPRS.gprs[index_1-1]>>1));
+            GPRS.gprs[index_1] =  (short)((GPRS.gprs[index_1]>>1));
         }
         else if(Short.toUnsignedInt(GPRS.gprs[index_1]) >=32768 && Short.toUnsignedInt(GPRS.gprs[index_1]) %2 == 0 ){
-            GPRS.gprs[index_1-1] =  (short)((GPRS.gprs[index_1-1]>>1) & 0x7FFF);
+            GPRS.gprs[index_1] =  (short)((GPRS.gprs[index_1]>>1) & 0x7FFF);
         }
         else{
-            GPRS.gprs[index_1-1] =  (short)((GPRS.gprs[index_1-1]>>1));
+            GPRS.gprs[index_1] =  (short)((GPRS.gprs[index_1]>>1));
         }
     }
 
     public void INC(String R1){
         Reset_carryBit();
         int index_1 = Integer.parseInt(R1);
-        if((GPRS.gprs[index_1-1]&0xFFFF) == 0xFFFF)
+        if((GPRS.gprs[index_1]&0xFFFF) == 0xFFFF)
             set_overflowBit();
         else
-        GPRS.gprs[index_1-1] = (short)(Short.toUnsignedInt(GPRS.gprs[index_1-1]) + 1);
+        GPRS.gprs[index_1] = (short)(Short.toUnsignedInt(GPRS.gprs[index_1]) + 1);
 
-        setting_flag(index_1 - 1);
+        setting_flag(index_1);
     }
 
     public void DEC(String R1){
         Reset_carryBit();
         int index_1 = Integer.parseInt(R1);
-        GPRS.gprs[index_1-1] = (short)(Short.toUnsignedInt(GPRS.gprs[index_1-1]) - 1);
+        GPRS.gprs[index_1] = (short)(Short.toUnsignedInt(GPRS.gprs[index_1]) - 1);
 
-        setting_flag(index_1 - 1);
+        setting_flag(index_1);
     }
 
     public void NOOP()
     {
+
     }
 
 

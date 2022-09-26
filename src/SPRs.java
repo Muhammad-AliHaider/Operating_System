@@ -30,6 +30,7 @@ public class SPRs{
 
             case 4:
                 flag = (short)  (flag & 0x0010);
+                flag = (short)  (flag | 0x0010);
                 break;
         }
 

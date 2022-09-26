@@ -37,7 +37,7 @@ public class Main {
         opcode = "";
         //setting program counter to the code base
         Memory.pc = Memory.cb;
-        Memory.cb = Memory.cc;
+//        Memory.cb = Memory.cc;
         SPRs.code_reg[0] =(byte) Memory.cb;
 //        SPRs.code_reg[2] = (byte) Memory.cc;
         //while program counter is less thabn the code couter or it does not encounter terminate operation
@@ -45,14 +45,11 @@ public class Main {
         while (!(Memory.pc >= Memory.cc) || !(Memory.memory[Memory.pc] == (byte)Byte.parseByte("f3"))){
             opcode = Integer.toHexString(Memory.memory[Memory.pc] & 0xFF);
 
-            System.out.println(opcode);
+//            System.out.println(opcode);
             switch (opcode) {
-                //whichever instruction is found in the memory, its switch case is run and program counter is
-                //incremmented accordingly
                 case "16":
                     Memory.pc++;
                     operations.Move(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
-                    //pc is incrememnted by two to jump on the next instruction
                     Memory.pc += 2;
                     break;
                 case "17":
@@ -68,8 +65,6 @@ public class Main {
                 case "19":
                     Memory.pc++;
                     operations.Mul(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
-                    System.out.println(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF));
-                    System.out.println(Integer.toHexString(Memory.memory[Memory.pc+1] & 0xFF));
                     Memory.pc += 2;
                     break;
                 case "1A":
@@ -152,68 +147,49 @@ public class Main {
                     operations.MOVS(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF),(Memory.memory[Memory.pc] & 0xFF));
                     Memory.pc++;
                     Memory.pc++;
-//                case "71":
-//                    Memory.pc++;
-//                    operations.SHL(mem.mem_hex[Memory.pc]);
-//                    Memory.pc += 1;
-//                    break;
-//                case "72":
-//                    Memory.pc++;
-//                    operations.SHR(mem.mem_hex[Memory.pc]);
-//                    Memory.pc += 1;
-//                    break;
-//                case "73":
-//                    Memory.pc++;
-//                    operations.RTL(mem.mem_hex[Memory.pc]);
-//                    Memory.pc += 1;
-//                    break;
-//                case "74":
-//                    Memory.pc++;
-//                    operations.RTR(mem.mem_hex[Memory.pc]);
-//                    Memory.pc += 1;
-//                    break;
-//                case "75":
-//                    Memory.pc++;
-//                    operations.INC(mem.mem_hex[Memory.pc]);
-//                    Memory.pc += 1;
-//                    break;
-//                case "76":
-//                    Memory.pc++;
-//                    operations.DEC(mem.mem_hex[Memory.pc]);
-//                    Memory.pc += 1;
-//                    break;
+                case "71":
+                    Memory.pc++;
+                    operations.SHL(Integer.toHexString(Memory.memory[Memory.pc]));
+                    Memory.pc += 1;
+                    break;
+                case "72":
+                    Memory.pc++;
+                    operations.SHR(Integer.toHexString(Memory.memory[Memory.pc]));
+                    Memory.pc += 1;
+                    break;
+                case "73":
+                    Memory.pc++;
+                    operations.RTL(Integer.toHexString(Memory.memory[Memory.pc]));
+                    Memory.pc += 1;
+                    break;
+                case "74":
+                    Memory.pc++;
+                    operations.RTR(Integer.toHexString(Memory.memory[Memory.pc]));
+                    Memory.pc += 1;
+                    break;
+                case "75":
+                    Memory.pc++;
+                    operations.INC(Integer.toHexString(Memory.memory[Memory.pc]));
+                    Memory.pc += 1;
+                    break;
+                case "76":
+                    Memory.pc++;
+                    operations.DEC(Integer.toHexString(Memory.memory[Memory.pc]));
+                    Memory.pc += 1;
+                    break;
                 case "f2":
                     operations.NOOP();
                     Memory.pc++;
                     break;
                 case "f3":
                     System.out.println("----------------------------------------------------------------------------------------------------");
-                    System.out.println("SPRS");
+                    System.out.println("GPRS");
                     GPRS.show_in_decimal();
                     System.out.println("----------------------------------------------------------------------------------------------------");
-                    System.out.println("GPRS");
+                    System.out.println("SPRS");
                     SPRs.display_sprs();
                     System.exit(0);
                     break;
-//                case "f3":
-//                    GPR gpr = new GPR();
-//                    System.out.println("General Purpose Registers\nDecimal Registers");
-//                    gpr.show_decimal_registers();
-//                    System.out.println("Hex Registers");
-//                    gpr.show_hex_registers();
-//                    System.out.println("\nSpecial Purpose Registers");
-//                    SPR sprs = new SPR();
-//                    sprs.spr[0] = (short) MEMORY.cb;
-//                    sprs.spr[2] = (short) MEMORY.cc;
-//                    sprs.spr[9] = (short) MEMORY.pc;
-//                    sprs.spr[10] = (short) Integer.parseInt(opcode, 16);
-//                    for (int i = 0; i < sprs.spr.length; i++) {
-//                        System.out.println(sprs.spr[i]);
-//
-//                    }
-//                    operations.END();
-
-
             }
         }
     }
