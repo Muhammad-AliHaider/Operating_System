@@ -221,18 +221,16 @@ public class ISA {
     public void MOVL(String R1 , int x )
     {
         int index_1 = Integer.parseInt(R1);
-        GPRS.gprs[index_1 - 1] = byte_short( Memory.memory[SPRs.data_reg[2] + x], Memory.memory[SPRs.data_reg[2] +x + 1]); // taking the value form memory to register
+        GPRS.gprs[index_1] = byte_short( (byte)((int)Integer.decode("0x"+Integer.toHexString(Memory.memory[SPRs.data_reg[0] + x]))), (byte)((int)Integer.decode("0x"+Integer.toHexString(Memory.memory[SPRs.data_reg[0] + x])))); // taking the value form memory to register
     }
 
     public void MOVS(String R1, int offset )
     {
         Reset_flag(); // resetting the flag 
         int index_1 = Integer.parseInt(R1);
-        String temp = String.valueOf(GPRS.gprs[index_1 - 1]);
-        String[] arr = new String[temp.length()];
-        for (int i = 0; i < temp.length(); i++) { // saving the value in the memory
-            arr = temp.split("");
-        }
+        String temp = "";
+        temp = Integer.toHexString(Short.toUnsignedInt(GPRS.gprs[index_1]));
+        String[] arr = temp.split("");
         String s1 = "";
         String s2 = "";
         switch (arr.length) {

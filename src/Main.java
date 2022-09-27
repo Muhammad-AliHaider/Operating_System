@@ -9,7 +9,6 @@ public class Main {
 
 
     public static void main(String[] args) throws FileNotFoundException {
-        Memory mem = new Memory();
         ISA operations = new ISA();
         String opcode = "";
         //setting code_reg and data_reg values
