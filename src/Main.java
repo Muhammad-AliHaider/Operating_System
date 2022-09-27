@@ -22,27 +22,31 @@ public class Main {
 //        }
         String opcode = "";
         //setting program counter to the code base
-        Memory.cb = Memory.pc;
+        SPRs.code_reg[0] = Memory.pc;
+        SPRs.code_reg[1] = 25000;
+        SPRs.data_reg[0] = 25001;
+        SPRs.data_reg[1] = 30000;
         //read the file and saved it's contents in the memory
-        Scanner in = new Scanner(new File("E:\\projects\\OS_project\\src\\p1.txt"));
+        Scanner in = new Scanner(new File("src\\p1.txt"));
         while (in.hasNext()) {
             byte a = (byte) in.nextInt();
             //coverting integer into hexa decimal
 //            Memory.memory[Memory.cc] = Integer.toHexString(a & 0xFF);
-            Memory.memory[Memory.cc] = a;
+            Memory.memory[SPRs.code_reg[2]] = a;
             //hex values --> 30 01 00 01 30 02 7f ff 19 01 02 f3
-            Memory.cc++;
+            SPRs.code_reg[2]++;
         }
 
         opcode = "";
         //setting program counter to the code base
-        Memory.pc = Memory.cb;
+        //Memory.pc = Memory.cb;
+        Memory.pc = SPRs.code_reg[0];
 //        Memory.cb = Memory.cc;
         SPRs.code_reg[0] =(byte) Memory.cb;
 //        SPRs.code_reg[2] = (byte) Memory.cc;
         //while program counter is less thabn the code couter or it does not encounter terminate operation
         //memory reading continues
-        while (!(Memory.pc >= Memory.cc) || !(Memory.memory[Memory.pc] == (byte)Byte.parseByte("f3"))){
+        while (!(Memory.pc >= SPRs.code_reg[2])/*(Memory.pc >= Memory.cc)*/ || !(Memory.memory[Memory.pc] == (byte)Byte.parseByte("f3"))){
             opcode = Integer.toHexString(Memory.memory[Memory.pc] & 0xFF);
 
 //            System.out.println(opcode);

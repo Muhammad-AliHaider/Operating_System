@@ -190,30 +190,30 @@ public class ISA {
 
     public void BZ(short num) {
         if (SPRs.get_flag() == 1) {
-            Memory.pc =Memory.cb + num;
+            Memory.pc = (short)(SPRs.code_reg[0] + num);
         }
     }
 
     public void BNZ(short num) {
         if (SPRs.get_flag() != 0x0002) {
-            Memory.pc = Memory.cb + num;
+            Memory.pc = (short)(SPRs.code_reg[0] + num);
         }
     }
 
     public void BC(short num) {
         if (SPRs.get_flag() == 0x0001) {
-            Memory.pc = Memory.cb + num;
+            Memory.pc = (short)(SPRs.code_reg[0] + num);
         }
     }
 
     public void BS(short num) {
         if (SPRs.get_flag() == 0x0004) {
-            Memory.pc = Memory.cb + num;
+            Memory.pc = (short)(SPRs.code_reg[0] + num);
         }
     }
 
     public void JMP(short num) {
-        Memory.pc = Memory.cb + num;
+        Memory.pc = (short)(SPRs.code_reg[0] + num);
     }
 
 
@@ -222,7 +222,7 @@ public class ISA {
     {
         int index_1 = Integer.parseInt(R1);
 
-        GPRS.gprs[index_1 - 1] = byte_short( Memory.memory[ SPRs.code_reg[2] + x], Memory.memory[SPRs.code_reg[2] +x + 1]);
+        GPRS.gprs[index_1 - 1] = byte_short( Memory.memory[SPRs.data_reg[2] + x], Memory.memory[SPRs.data_reg[2] +x + 1]);
     }
 
     public void MOVS(String R1, int offset )
@@ -256,9 +256,9 @@ public class ISA {
                 break;
         }
 
-        Memory.memory[SPRs.code_reg[1] + offset] = Byte.valueOf(s1);
+        Memory.memory[SPRs.data_reg[0] + offset] = Byte.valueOf(s1);
         Memory.pc++;
-        Memory.memory[SPRs.code_reg[1] + offset+ 1] = Byte.valueOf(s2);
+        Memory.memory[SPRs.data_reg[0] + offset+ 1] = Byte.valueOf(s2);
         Memory.pc++;
 
         setting_flag(GPRS.gprs[index_1-1]);

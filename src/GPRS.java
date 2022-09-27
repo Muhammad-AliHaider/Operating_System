@@ -4,7 +4,14 @@ public class GPRS {
 
     public static void show_in_decimal(){
         for(int i = 0 ; i < 16; i++)
-            System.out.println("R" + (i)   + " = " + gprs[i] );
+        {
+            if(gprs[i]<=255)
+            System.out.println("R" + (i)   + " = 0 | " + gprs[i]  );
+            else
+            {
+                System.out.println("R" + (i)   + " = " + Short.toString((short)(gprs[i]-(short)(255))) + " | 255 " );
+            }
+        }
     }
     public void show_in_hex(){
         for(int i = 0 ; i < 16; i++)
