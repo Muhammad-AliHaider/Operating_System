@@ -11,17 +11,8 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         Memory mem = new Memory();
         ISA operations = new ISA();
-        //read the file and saved it's contents in the memory
-        //Scanner in = new Scanner(new File("p1.txt"));
-//        while (in.hasNext()) {
-//            byte a = (byte) in.nextInt();
-//            //coverting integer into hexa decimal
-//            Memory.memory[Memory.pc + 3] = Integer.toHexString(a & 0xFF);
-//            //hex values --> 30 01 00 01 30 02 7f ff 19 01 02 f3
-//            mem.cc++;
-//        }
         String opcode = "";
-        //setting program counter to the code base
+        //setting code_reg and data_reg values
         SPRs.code_reg[0] = Memory.pc;
         SPRs.code_reg[1] = 25000;
         SPRs.data_reg[0] = 25001;
@@ -31,25 +22,16 @@ public class Main {
         while (in.hasNext()) {
             byte a = (byte) in.nextInt();
             //coverting integer into hexa decimal
-//            Memory.memory[Memory.cc] = Integer.toHexString(a & 0xFF);
             Memory.memory[SPRs.code_reg[2]] = a;
             //hex values --> 30 01 00 01 30 02 7f ff 19 01 02 f3
             SPRs.code_reg[2]++;
         }
 
+        // switch cases showing, in which every instruction is passed as a hex string , 0xFF ensures that the value staying with in byte limit
         opcode = "";
-        //setting program counter to the code base
-        //Memory.pc = Memory.cb;
         Memory.pc = SPRs.code_reg[0];
-//        Memory.cb = Memory.cc;
-        SPRs.code_reg[0] =(byte) Memory.cb;
-//        SPRs.code_reg[2] = (byte) Memory.cc;
-        //while program counter is less thabn the code couter or it does not encounter terminate operation
-        //memory reading continues
         while (!(Memory.pc >= SPRs.code_reg[2])/*(Memory.pc >= Memory.cc)*/ || !(Memory.memory[Memory.pc] == (byte)Byte.parseByte("f3"))){
             opcode = Integer.toHexString(Memory.memory[Memory.pc] & 0xFF);
-
-//            System.out.println(opcode);
             switch (opcode) {
                 case "16":
                     Memory.pc++;

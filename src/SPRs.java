@@ -3,11 +3,11 @@ import java.sql.SQLOutput;
 public class SPRs{
 
 
-    public static short zero = 0;
-    public static short[] code_reg = new short[3];
-    public static short[] stack_reg = new short[3];
-    public static short[] data_reg = new short[2];
-    public static short[] register_future = new short[6];
+    public static short zero = 0; // zero_register
+    public static short[] code_reg = new short[3]; // code_reg[0] = code base , code_reg[1] = code limit , code_reg[2] = code counter
+    public static short[] stack_reg = new short[3];// stack_reg[0] = stack base , stack_reg[1] = stack limit , stack_reg[2] = stack counter
+    public static short[] data_reg = new short[2];// data_reg[0] = data base , data_reg[1] = data limit
+    public static short[] register_future = new short[6]; // 6 Register for future use
     private static short flag = 0; // 0 = carry bit , 1 = zero bit , 2 = sign bit , 3 = overflow bit , 4 = unused
 
 
