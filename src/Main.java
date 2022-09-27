@@ -33,7 +33,7 @@ public class Main {
         // switch cases showing, in which every instruction is passed as a hex string , 0xFF ensures that the value staying with in byte limit
         opcode = "";
         Memory.pc = SPRs.code_reg[0];
-        while (!(Memory.pc >= SPRs.code_reg[2])/*(Memory.pc >= Memory.cc)*/ || !(Memory.memory[Memory.pc] == (byte)Byte.parseByte("f3"))){
+        while (!(Memory.pc >= SPRs.code_reg[2]) || !(Memory.memory[Memory.pc] == (byte)Byte.parseByte("f3"))){
             opcode = Integer.toHexString(Memory.memory[Memory.pc] & 0xFF);
             switch (opcode) {
                 case "16":

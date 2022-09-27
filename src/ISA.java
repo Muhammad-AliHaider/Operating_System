@@ -221,7 +221,7 @@ public class ISA {
     public void MOVL(String R1 , int x )
     {
         int index_1 = Integer.parseInt(R1);
-        GPRS.gprs[index_1] = byte_short( (byte)((int)Integer.decode("0x"+Integer.toHexString(Memory.memory[SPRs.data_reg[0] + x]))), (byte)((int)Integer.decode("0x"+Integer.toHexString(Memory.memory[SPRs.data_reg[0] + x])))); // taking the value form memory to register
+        GPRS.gprs[index_1] = byte_short(Memory.memory[SPRs.data_reg[0] + x],Memory.memory[SPRs.data_reg[0] + x]); // taking the value form memory to register
     }
 
     public void MOVS(String R1, int offset )
@@ -253,9 +253,9 @@ public class ISA {
                 break;
         }
 
-        Memory.memory[SPRs.data_reg[0] + offset] = Byte.valueOf(s1);
+        Memory.memory[SPRs.data_reg[0] + offset] = (byte)((int)Integer.decode("0x"+s1));
         Memory.pc++;
-        Memory.memory[SPRs.data_reg[0] + offset+ 1] = Byte.valueOf(s2);
+        Memory.memory[SPRs.data_reg[0] + offset+ 1] = (byte)((int)Integer.decode("0x"+s2));
         Memory.pc++;
 
         setting_flag(index_1);// setting the flag
@@ -273,7 +273,7 @@ public class ISA {
 
     public void SHR(String R1){
         int index_1 = Integer.parseInt(R1);
-        GPRS.gprs[index_1] = (short) ((short)(Short.toUnsignedInt(GPRS.gprs[index_1]) >> 1)& 0x0FFF); // ensures that the most sig bit is 0
+        GPRS.gprs[index_1] = (short) ((short)(Short.toUnsignedInt(GPRS.gprs[index_1]) >> 1)& 0x7FFF); // ensures that the most sig bit is 0
         setting_flag(index_1); // setting the flag
     }
 
