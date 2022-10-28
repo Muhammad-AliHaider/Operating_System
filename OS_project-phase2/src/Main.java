@@ -1,14 +1,13 @@
 import javax.print.attribute.SetOfIntegerSyntax;
 import java.awt.image.MemoryImageSource;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.math.BigInteger;
 import java.util.Scanner;
 
 public class Main {
 
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         ISA operations = new ISA();
         String opcode = "";
         //setting code_reg and data_reg values
@@ -17,24 +16,47 @@ public class Main {
         SPRs.data_reg[0] = 25001;
         SPRs.data_reg[1] = 30000;
         //read the file and saved it's contents in the memory
-        Scanner in = new Scanner(new File("src\\p1.txt"));
-        while (in.hasNext() ) {
-            byte a = (byte) in.nextInt();
-            //coverting integer into hexa decimal
-            Memory.memory[SPRs.code_reg[2]] = a;
-            //hex values --> 30 01 00 01 30 02 7f ff 19 01 02 f3
-            SPRs.code_reg[2]++;
-            if((SPRs.code_reg[2] >= SPRs.code_reg[1])){
-                System.out.println("code_limit reached");
-                break;
+//        Scanner in = new Scanner(new File("src\\p1.txt"));
+//        while (in.hasNext() ) {
+//            byte a = (byte) in.nextInt();
+//            //coverting integer into hexa decimal
+//            Memory.memory[SPRs.code_reg[2]] = a;
+//            //hex values --> 30 01 00 01 30 02 7f ff 19 01 02 f3
+//            SPRs.code_reg[2]++;
+//            if((SPRs.code_reg[2] >= SPRs.code_reg[1])){
+//                System.out.println("code_limit reached");
+//                break;
+//            }
+
+        File file = new File("E:\\projects\\OS_project\\OS_project-phase2\\src\\flags");
+
+        try {
+            FileInputStream input= new FileInputStream(file);
+            int character;
+            // read() function return int between 0 and 255.
+
+            while ((character = input.read()) != -1) {
+//                System.out.print((character);
+                Memory.memory[SPRs.code_reg[2]] = (byte) character;
+                SPRs.code_reg[2]++;
+                if((SPRs.code_reg[2] >= SPRs.code_reg[1])) {
+                    System.out.println("code_limit reached");
+                    break;
+                }
             }
         }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(Integer.toHexString(Byte.toUnsignedInt(Memory.memory[134]) & 0xFF));
+
 
         // switch cases showing, in which every instruction is passed as a hex string , 0xFF ensures that the value staying with in byte limit
         opcode = "";
         Memory.pc = SPRs.code_reg[0];
         while (!(Memory.pc >= SPRs.code_reg[2]) || !(Memory.memory[Memory.pc] == (byte)Byte.parseByte("f3"))){
-            opcode = Integer.toHexString(Memory.memory[Memory.pc] & 0xFF);
+            opcode = Integer.toHexString(Byte.toUnsignedInt(Memory.memory[Memory.pc]) & 0xFF);
             switch (opcode) {
                 case "16":
                     Memory.pc++;
