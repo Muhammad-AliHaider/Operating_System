@@ -10,7 +10,7 @@ public class SPRs{
     public static short[] register_future = new short[6]; // 6 Register for future use
     private static short flag = 0; // 0 = carry bit , 1 = zero bit , 2 = sign bit , 3 = overflow bit , 4 = unused
 
-
+    public static short[] sprs = new short[16];
     public static void set_flag(int x){
         switch(x){
             case 0:
@@ -66,6 +66,29 @@ public class SPRs{
 
         System.out.println("Flag Register");
         System.out.println("Flag = " + get_flag());
+
+    }
+
+    public static short[] formSPRS(){
+        sprs[0] = zero;
+        sprs[1] = code_reg[0];
+        sprs[2] = code_reg[1];
+        sprs[3] = code_reg[2];
+        sprs[4] = stack_reg[0];
+        sprs[5] = stack_reg[1];
+        sprs[6] = stack_reg[2];
+        sprs[7] = data_reg[0];
+        sprs[8] = data_reg[1];
+        sprs[9] = register_future[0];
+        sprs[10] = register_future[1];
+        sprs[11] = register_future[2];
+        sprs[12] = register_future[3];
+        sprs[13] = register_future[4];
+        sprs[14] = register_future[5];
+        sprs[15] = flag;
+
+        return sprs;
+
 
     }
 }
