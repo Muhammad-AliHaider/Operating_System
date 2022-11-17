@@ -8,6 +8,14 @@ public class Memory {
             memory1[i] = new Page();
         }
     }
+    public static void Display(){
+        for(int o = 0 ; o < 512 ; o++) {
+            System.out.println("page # " + o);
+            for (int i = 0; i < 128; i++) {
+                System.out.println(Memory.memory1[o].page[i]);
+            }
+        }
+    }
 
     public static void store(int offset, int page_number){
 

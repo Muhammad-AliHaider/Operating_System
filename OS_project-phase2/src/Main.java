@@ -2,6 +2,7 @@ import javax.print.attribute.SetOfIntegerSyntax;
 import java.awt.image.MemoryImageSource;
 import java.io.*;
 import java.math.BigInteger;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -12,10 +13,10 @@ public class Main {
         ISA operations = new ISA();
         String opcode = "";
         //setting code_reg and data_reg values
-        SPRs.code_reg[0] = Memory.pc;
-        SPRs.code_reg[1] = 25000;
-        SPRs.data_reg[0] = 25001;
-        SPRs.data_reg[1] = 30000;
+//        SPRs.code_reg[0] = Memory.pc;
+//        SPRs.code_reg[1] = 25000;
+//        SPRs.data_reg[0] = 25001;
+//        SPRs.data_reg[1] = 30000;
 
 
 
@@ -28,8 +29,12 @@ public class Main {
 
         File[] file = {file1,file2,file3,file4,file5,file6};
         int frame_number= 0;
+        int Ccount = 0;
 
         for(int o = 0 ;o < 6 ; o++) {
+//            System.out.println("1st loop");
+
+
             try {
                 FileInputStream input = new FileInputStream(file[o]);
                 PCB pcb = null;
@@ -45,34 +50,43 @@ public class Main {
                 // read() function return int between 0 and 255.
 
                 while ((character = input.read()) != -1) {
+//                    System.out.println("1st loop");
+
+//                    System.out.println("ppppp");
 //                System.out.print((character);
-                    Memory.memory[SPRs.code_reg[2]] = (byte) character;
+//                    Memory.memory[SPRs.code_reg[2]] = (byte) character;
                     array.add(character);
 //                System.out.println(character);
 //                SPRs.code_reg[2]++;
-                    if ((SPRs.code_reg[2] >= SPRs.code_reg[1])) {
-                        System.out.println("code_limit reached");
-                        break;
-                    }
+//                    if ((SPRs.code_reg[2] >= SPRs.code_reg[1])) {
+//                        System.out.println("code_limit reached");
+//                        break;
+//                    }
                 }
+//                System.out.println(file[o].getName());
                 process_pri = array.get(0);
+//                System.out.println(process_pri);
+//                System.out.println("---------------");
                 processID = Integer.parseInt(Integer.toString(array.get(1)) + Integer.toString(array.get(2)));
                 process_size = array.size() ;
                 data_size = Integer.parseInt(((Integer.toHexString(array.get(3) & 0xff)) + Integer.toHexString(array.get(4) & 0xff)), 16);
                 code_size = process_size - data_size - 8;
-                System.out.println(code_size);
+//                System.out.println(code_size);
 //               ----------------------------------------------------------------------------------------------------------------------
                 int total_size = process_size - 8 + 50;
                 int page_numbers = (int)(total_size/128);
+
 //              -----------------------------------------------------------------------------------------------------------------------
-                System.out.println("data");
+//                System.out.println("data");
                 count = 0;
                 int i = 0;
                 int k = 8;
                 int offset = 0;
+                SPRs.data_reg[0] = (short)Ccount;
                 while (i < data_size) {
-                    System.out.print(Integer.toHexString(array.get(k)));
-                    System.out.println(" ");
+
+//                    System.out.print(Integer.toHexString(array.get(k)));
+//                    System.out.println(" ");
                     Memory.memory1[frame_number].page[offset] = (byte)((int)array.get(k));
                     if(offset > 128 ){
                         offset  = 0;
@@ -82,13 +96,18 @@ public class Main {
                     i++;
                     offset++;
                     count++;
+                    Ccount++;
+//                    System.out.println("ppppp");
                 }
-                System.out.println();
-                System.out.println("code");
+                SPRs.data_reg[1] = (short) Ccount;
+//                System.out.println();
+//                System.out.println("code");
                 i = 0;
+                SPRs.code_reg[0] = (short) Ccount;
                 while (i <= code_size) {
-                    System.out.print(Integer.toHexString(array.get(k)));
-                    System.out.print(" ");
+//                    System.out.print(Integer.toHexString(array.get(k)));
+//                    System.out.print(" ");
+
                     if(offset > 128 ){
                         offset  = 0;
                         frame_number++;
@@ -96,13 +115,53 @@ public class Main {
                     k++;
                     i++;
                     offset++;
+                    Ccount++;
+
                 }
-                pcb = new PCB(processID, process_pri, process_size, data_size, file[o].getName(), SPRs.formSPRS(), GPRS.gprs);
+                SPRs.code_reg[1] =(short) Ccount;
+                int[] frames = new int[page_numbers + 1];
+                int x = 0;
+                for(int l = frame_number-page_numbers ; l <= frame_number;l++){
+                    frames[x] = l;
+                    x++;
+                }
+                pcb = new PCB(processID, process_pri, process_size, data_size, file[o].getName(), SPRs.formSPRS(), GPRS.gprs, frames);
+//                System.out.println(pcb.File_name);
+//                System.out.println(pcb.SPRs[7]);
                 Scheduling.add_to_queue(pcb);
+//                System.out.println("lkl");
+//                System.out.println("1st loop");
+//                System.out.println(frame_number);
+
+                frame_number++;
+                Ccount = frame_number * 128;
+//                System.out.println(Ccount);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+//            Ccount++;
+
         }
+
+        PCB Runningpcb = Scheduling.priority();
+//        System.out.println(Runningpcb.File_name);
+//        System.out.println(Runningpcb.SPRs[7]);
+            Runningpcb = Scheduling.priority();
+//        System.out.println(Runningpcb.process_pri);
+
+//        for(int i = (int)Runningpcb.SPRs[7] ; i < (int) Runningpcb.SPRs[8] ; i++){
+//            int[] arr = Memory.tranlation(i);
+////            System.out.println(arr[0]);
+////            System.out.println(arr[1]);
+//            System.out.println(Memory.memory1[arr[0]].page[arr[1]]);
+//        }
+
+
+
+//        for(int i = 0  ; i <3 ; i++){
+//            PCB Runningpcb = Scheduling.priority();
+//            System.out.println(Runningpcb.File_name);
+//        }
 
 
 
@@ -110,6 +169,7 @@ public class Main {
         opcode = "";
         Memory.pc = SPRs.code_reg[0];
         while (!(Memory.pc >= SPRs.code_reg[2]) || !(Memory.memory[Memory.pc] == (byte)Byte.parseByte("f3"))){
+
             opcode = Integer.toHexString(Byte.toUnsignedInt(Memory.memory[Memory.pc]) & 0xFF);
             switch (opcode) {
                 case "16":
