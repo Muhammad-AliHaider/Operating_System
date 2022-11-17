@@ -1,28 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1afdfb80-765a-41c3-aa21-7a3879fa048d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OS_project.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OS_project/GPRS.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OS_project/ISA.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OS_project/Main.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OS_project/Memory.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OS_project/SPRs.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OS_project/p1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OS_project/p2.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GPRS.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ISA.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Memory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SPRs.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/p1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/p2.txt" beforeDir="false" />
-    </list>
+    <list default="true" id="1afdfb80-765a-41c3-aa21-7a3879fa048d" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -47,13 +26,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "E:/projects/OS_project/OS_project-phase2",
+    "run.code.analysis.last.selected.profile": "pProject Default"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
