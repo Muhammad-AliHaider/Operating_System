@@ -30,10 +30,11 @@ public class Main {
         File[] file = {file1,file2,file3,file4,file5,file6};
         int frame_number= 0;
         int Ccount = 0;
-
+        Memory.Init_Memory();
+//        Memory.Display();
         for(int o = 0 ;o < 6 ; o++) {
 //            System.out.println("1st loop");
-
+            Memory.Display();
 
             try {
                 FileInputStream input = new FileInputStream(file[o]);
@@ -50,26 +51,21 @@ public class Main {
                 // read() function return int between 0 and 255.
 
                 while ((character = input.read()) != -1) {
-//                    System.out.println("1st loop");
 
-//                    System.out.println("ppppp");
-//                System.out.print((character);
-//                    Memory.memory[SPRs.code_reg[2]] = (byte) character;
                     array.add(character);
-//                System.out.println(character);
-//                SPRs.code_reg[2]++;
-//                    if ((SPRs.code_reg[2] >= SPRs.code_reg[1])) {
-//                        System.out.println("code_limit reached");
-//                        break;
-//                    }
+//                    System.out.println(character);
                 }
 //                System.out.println(file[o].getName());
                 process_pri = array.get(0);
-//                System.out.println(process_pri);
-//                System.out.println("---------------");
+
                 processID = Integer.parseInt(Integer.toString(array.get(1)) + Integer.toString(array.get(2)));
+
                 process_size = array.size() ;
-                data_size = Integer.parseInt(((Integer.toHexString(array.get(3) & 0xff)) + Integer.toHexString(array.get(4) & 0xff)), 16);
+
+                String a = Page.ZeroAppender(Integer.toHexString(array.get(3)& 0xff));
+                String b = Page.ZeroAppender(Integer.toHexString(array.get(4)& 0xff)) ;
+                data_size = Integer.parseInt((a +b),16) ;
+
                 code_size = process_size - data_size - 8;
 //                System.out.println(code_size);
 //               ----------------------------------------------------------------------------------------------------------------------
@@ -77,7 +73,7 @@ public class Main {
                 int page_numbers = (int)(total_size/128);
 
 //              -----------------------------------------------------------------------------------------------------------------------
-//                System.out.println("data");
+                System.out.println("data");
                 count = 0;
                 int i = 0;
                 int k = 8;
@@ -87,11 +83,13 @@ public class Main {
 
 //                    System.out.print(Integer.toHexString(array.get(k)));
 //                    System.out.println(" ");
-                    Memory.memory1[frame_number].page[offset] = (byte)((int)array.get(k));
-                    if(offset > 128 ){
+
+                    if(offset >= 128 ){
                         offset  = 0;
                         frame_number++;
                     }
+                    Memory.memory1[frame_number].page[offset] = (byte)((int)array.get(k));
+//                    System.out.println(Byte.toUnsignedInt(Memory.memory1[frame_number].page[offset]));
                     k++;
                     i++;
                     offset++;
@@ -100,18 +98,22 @@ public class Main {
 //                    System.out.println("ppppp");
                 }
                 SPRs.data_reg[1] = (short) Ccount;
-//                System.out.println();
-//                System.out.println("code");
+                System.out.println();
+                System.out.println("code");
+//                Ccount++;
                 i = 0;
                 SPRs.code_reg[0] = (short) Ccount;
-                while (i <= code_size) {
+                while (i < code_size) {
 //                    System.out.print(Integer.toHexString(array.get(k)));
 //                    System.out.print(" ");
+//                    Memory.memory1[frame_number].page[offset] = (byte)((int)array.get(k));
 
-                    if(offset > 128 ){
+                    if(offset >= 128 ){
                         offset  = 0;
                         frame_number++;
                     }
+                    Memory.memory1[frame_number].page[offset] = (byte)((int)array.get(k));
+//                    System.out.println(Byte.toUnsignedInt(Memory.memory1[frame_number].page[offset]));
                     k++;
                     i++;
                     offset++;
@@ -143,10 +145,10 @@ public class Main {
 
         }
 
-        PCB Runningpcb = Scheduling.priority();
+//        PCB Runningpcb = Scheduling.priority();
 //        System.out.println(Runningpcb.File_name);
 //        System.out.println(Runningpcb.SPRs[7]);
-            Runningpcb = Scheduling.priority();
+//            Runningpcb = Scheduling.priority();
 //        System.out.println(Runningpcb.process_pri);
 
 //        for(int i = (int)Runningpcb.SPRs[7] ; i < (int) Runningpcb.SPRs[8] ; i++){
@@ -155,6 +157,9 @@ public class Main {
 ////            System.out.println(arr[1]);
 //            System.out.println(Memory.memory1[arr[0]].page[arr[1]]);
 //        }
+
+        Memory.Display();
+
 
 
 

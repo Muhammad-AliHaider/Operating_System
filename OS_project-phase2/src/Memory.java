@@ -3,7 +3,7 @@ public class Memory {
     public static Page[] memory1 = new Page[512];
     public static short pc = 0;
 
-    public Memory(){
+    public static void  Init_Memory(){
         for(int i = 0 ; i < 512 ; i++){
             memory1[i] = new Page();
         }
@@ -12,7 +12,7 @@ public class Memory {
         for(int o = 0 ; o < 512 ; o++) {
             System.out.println("page # " + o);
             for (int i = 0; i < 128; i++) {
-                System.out.println(Memory.memory1[o].page[i]);
+                System.out.println(Byte.toUnsignedInt(Memory.memory1[o].page[i]));
             }
         }
     }

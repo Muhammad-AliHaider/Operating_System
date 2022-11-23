@@ -12,7 +12,7 @@ public class test {
 
 
     public static void main(String[] args) throws IOException {
-        File file = new File("E:\\projects\\OS_project\\OS_project-phase2\\src\\p5");
+        File file = new File("E:\\projects\\OS_project\\OS_project-phase2\\src\\sfull");
 
         FileInputStream input= new FileInputStream(file);
         PCB pcb= null;
@@ -35,7 +35,10 @@ public class test {
         process_pri= array.get(0);
         processID = Integer.parseInt(Integer.toString(array.get(1)) + Integer.toString(array.get(2))) ;
         process_size = array.size() - 1;
-        data_size = Integer.parseInt(((Integer.toHexString(array.get(3) & 0xff )) +Integer.toHexString(array.get(4) & 0xff)),16) ;
+        String a = Page.ZeroAppender(Integer.toHexString(array.get(3)& 0xff));
+        String b = Page.ZeroAppender(Integer.toHexString(array.get(4)& 0xff)) ;
+
+        data_size = Integer.parseInt((a +b),16) ;
         code_size = process_size -  data_size - 8;
         System.out.println(code_size);
         System.out.println("data");
