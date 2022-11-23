@@ -1,0 +1,32 @@
+Index: src/Main.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>public class Main {\r\n\r\n    public static void main(String[] args) {\r\n        System.out.println(\"Hello world!\");\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Main.java b/src/Main.java
+--- a/src/Main.java	(revision 54fc5fabae39180ab3c9f2c1c7f7056f501cf9dd)
++++ b/src/Main.java	(date 1663839179092)
+@@ -1,6 +1,19 @@
++import java.io.File;
++import java.util.Scanner;
++
+ public class Main {
+ 
+     public static void main(String[] args) {
+-        System.out.println("Hello world!");
++        //created memory object
++        Memory mem = new Memory();
++        //read the file and saved it's contents in the memory
++        Scanner in = new Scanner(new File("p1.txt"));
++        while (in.hasNext()) {
++            byte a = (byte) in.nextInt();
++            //coverting integer into hexa decimal
++            mem.mem_hex[mem.cc] = Integer.toHexString(a & 0xFF);
++            //hex values --> 30 01 00 01 30 02 7f ff 19 01 02 f3
++            mem.cc++;
++        }
+     }
+ }
+\ No newline at end of file

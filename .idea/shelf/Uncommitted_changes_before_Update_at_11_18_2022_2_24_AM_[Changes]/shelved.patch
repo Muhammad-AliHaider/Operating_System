@@ -1,0 +1,71 @@
+Index: OS_project-phase2/.idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"VcsDirectoryMappings\">\r\n    <mapping directory=\"$PROJECT_DIR$\" vcs=\"Git\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/OS_project-phase2/.idea/vcs.xml b/OS_project-phase2/.idea/vcs.xml
+--- a/OS_project-phase2/.idea/vcs.xml	(revision 0750b4fa66a21c17881de8bc13cb10c8e5f17316)
++++ b/OS_project-phase2/.idea/vcs.xml	(date 1666853134880)
+@@ -1,6 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="VcsDirectoryMappings">
++    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: OS_project-phase2/src/Memory.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>public class Memory {\r\n    public static byte[] memory = new byte[65536]; // 64KB of Memory\r\n\r\n    public static short pc = 0;\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/OS_project-phase2/src/Memory.java b/OS_project-phase2/src/Memory.java
+--- a/OS_project-phase2/src/Memory.java	(revision 0750b4fa66a21c17881de8bc13cb10c8e5f17316)
++++ b/OS_project-phase2/src/Memory.java	(date 1666854842985)
+@@ -3,4 +3,5 @@
+ 
+     public static short pc = 0;
+ 
++
+ }
+Index: OS_project-phase2/src/PCB.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>public class PCB {\r\n    public int processID;\r\n    public int process_pri;\r\n    public int process_size;\r\n    public String File_name;\r\n    public Short[] SPRs;\r\n    public Short[] GPRS;\r\n\r\n    public PCB(int P_id,int P_pri,int P_size, String Name, Short[] SPRs, Short[] GPRs){\r\n        this.processID = P_id;\r\n        this.process_pri = P_pri;\r\n        this.process_size = P_size;\r\n        this.File_name = Name;\r\n        this.SPRs = SPRs;\r\n        this.GPRS = GPRs;\r\n    }\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/OS_project-phase2/src/PCB.java b/OS_project-phase2/src/PCB.java
+--- a/OS_project-phase2/src/PCB.java	(revision 0750b4fa66a21c17881de8bc13cb10c8e5f17316)
++++ b/OS_project-phase2/src/PCB.java	(date 1666860665021)
+@@ -2,17 +2,24 @@
+     public int processID;
+     public int process_pri;
+     public int process_size;
++    public int process_data;
++    public int process_code;
+     public String File_name;
+     public Short[] SPRs;
+     public Short[] GPRS;
++    PageTable page_table;
+ 
+-    public PCB(int P_id,int P_pri,int P_size, String Name, Short[] SPRs, Short[] GPRs){
++    public PCB(int P_id, int P_pri, int P_size, int P_data, int P_code, String Name, Short[] SPRs, Short[] GPRs, int numOfPages){
+         this.processID = P_id;
+         this.process_pri = P_pri;
+         this.process_size = P_size;
++        this.process_data = P_data;
++        this.process_code = P_code;
+         this.File_name = Name;
+         this.SPRs = SPRs;
+         this.GPRS = GPRs;
++        this.page_table = new PageTable(numOfPages);
++
+     }
+ 
+ 
