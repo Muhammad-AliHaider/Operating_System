@@ -1,5 +1,5 @@
 public class Page {
-    public static byte[] page = new byte[128];
+    public byte[] page = new byte[128];
 
     public Page(){
         for(int i = 0 ; i < 128 ; i++){

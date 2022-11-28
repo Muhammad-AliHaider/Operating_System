@@ -34,8 +34,8 @@ public class Main {
 //        Memory.Display();
         for(int o = 0 ;o < 6 ; o++) {
 //            System.out.println("1st loop");
-            Memory.Display();
-
+//            Memory.Display();
+//            System.out.println("-------------------------------------------------------------------------------------------------------------------------");
             try {
                 FileInputStream input = new FileInputStream(file[o]);
                 PCB pcb = null;
@@ -72,8 +72,10 @@ public class Main {
                 int total_size = process_size - 8 + 50;
                 int page_numbers = (int)(total_size/128);
 
+                System.out.println(file[o].getName() + " " + page_numbers + " " + process_size);
+
 //              -----------------------------------------------------------------------------------------------------------------------
-                System.out.println("data");
+//                System.out.println("data");
                 count = 0;
                 int i = 0;
                 int k = 8;
@@ -97,9 +99,9 @@ public class Main {
                     Ccount++;
 //                    System.out.println("ppppp");
                 }
-                SPRs.data_reg[1] = (short) Ccount;
+                SPRs.data_reg[1] = (short) (Ccount);
                 System.out.println();
-                System.out.println("code");
+//                System.out.println("code");
 //                Ccount++;
                 i = 0;
                 SPRs.code_reg[0] = (short) Ccount;
@@ -118,6 +120,7 @@ public class Main {
                     i++;
                     offset++;
                     Ccount++;
+                    count++;
 
                 }
                 SPRs.code_reg[1] =(short) Ccount;
@@ -127,7 +130,16 @@ public class Main {
                     frames[x] = l;
                     x++;
                 }
-                pcb = new PCB(processID, process_pri, process_size, data_size, file[o].getName(), SPRs.formSPRS(), GPRS.gprs, frames);
+                short[] gprs_to_form = new short[16];
+                short[] sprs_to_form = new short[16];
+                short[] SPRS_formed = SPRs.formSPRS();
+
+                for (int index = 0 ; index < 16; index++){
+                    gprs_to_form[index] = GPRS.gprs[index];
+                    sprs_to_form[index] = SPRS_formed[index];
+                }
+
+                pcb = new PCB(processID, process_pri, process_size, data_size, file[o].getName(), sprs_to_form, gprs_to_form, frames);
 //                System.out.println(pcb.File_name);
 //                System.out.println(pcb.SPRs[7]);
                 Scheduling.add_to_queue(pcb);
@@ -145,20 +157,25 @@ public class Main {
 
         }
 
-//        PCB Runningpcb = Scheduling.priority();
+        PCB Runningpcb = Scheduling.priority();
+        System.out.println(Runningpcb.File_name);
+        System.out.println(Runningpcb.SPRs[1]);
+//        Runningpcb = Scheduling.priority();
 //        System.out.println(Runningpcb.File_name);
-//        System.out.println(Runningpcb.SPRs[7]);
-//            Runningpcb = Scheduling.priority();
+
 //        System.out.println(Runningpcb.process_pri);
 
-//        for(int i = (int)Runningpcb.SPRs[7] ; i < (int) Runningpcb.SPRs[8] ; i++){
-//            int[] arr = Memory.tranlation(i);
-////            System.out.println(arr[0]);
-////            System.out.println(arr[1]);
-//            System.out.println(Memory.memory1[arr[0]].page[arr[1]]);
-//        }
-
         Memory.Display();
+
+        for(int i = (int)Runningpcb.SPRs[1] ; i < (int) Runningpcb.SPRs[2] ; i++){
+            int[] arr = Memory.tranlation(i);
+//            System.out.println(Runningpcb.SPRs[1]);
+//            System.out.println(arr[0]);
+//            System.out.println(arr[1]);
+            System.out.println(Integer.toHexString(Byte.toUnsignedInt(Memory.memory1[arr[0]].page[arr[1]])));
+        }
+
+//        Memory.Display();
 
 
 
