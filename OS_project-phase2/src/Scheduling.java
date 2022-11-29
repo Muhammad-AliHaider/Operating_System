@@ -26,7 +26,6 @@ public static void add_to_queue(PCB pcb){
 
 public static PCB priority()
 {
-
     return queue1.dequeue();
 }
 

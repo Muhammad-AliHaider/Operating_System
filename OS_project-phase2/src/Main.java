@@ -126,10 +126,16 @@ public class Main {
                 SPRs.code_reg[1] =(short) Ccount;
                 int[] frames = new int[page_numbers + 1];
                 int x = 0;
+
+                SPRs.stack_reg[0] = (short) Ccount;
+                SPRs.stack_reg[1] = (short) (Ccount+50);
+                SPRs.stack_reg[2] = SPRs.stack_reg[0];
+
                 for(int l = frame_number-page_numbers ; l <= frame_number;l++){
                     frames[x] = l;
                     x++;
                 }
+
                 short[] gprs_to_form = new short[16];
                 short[] sprs_to_form = new short[16];
                 short[] SPRS_formed = SPRs.formSPRS();
@@ -159,21 +165,21 @@ public class Main {
 
         PCB Runningpcb = Scheduling.priority();
         System.out.println(Runningpcb.File_name);
-        System.out.println(Runningpcb.SPRs[1]);
+//        System.out.println(Runningpcb.SPRs[1]);
 //        Runningpcb = Scheduling.priority();
 //        System.out.println(Runningpcb.File_name);
 
 //        System.out.println(Runningpcb.process_pri);
 
-        Memory.Display();
+//        Memory.Display();
 
-        for(int i = (int)Runningpcb.SPRs[1] ; i < (int) Runningpcb.SPRs[2] ; i++){
-            int[] arr = Memory.tranlation(i);
-//            System.out.println(Runningpcb.SPRs[1]);
-//            System.out.println(arr[0]);
-//            System.out.println(arr[1]);
-            System.out.println(Integer.toHexString(Byte.toUnsignedInt(Memory.memory1[arr[0]].page[arr[1]])));
-        }
+//        for(int i = (int)Runningpcb.SPRs[1] ; i < (int) Runningpcb.SPRs[2] ; i++){
+//            int[] arr = Memory.tranlation(i);
+////            System.out.println(Runningpcb.SPRs[1]);
+////            System.out.println(arr[0]);
+////            System.out.println(arr[1]);
+//            System.out.println(Integer.toHexString(Byte.toUnsignedInt(Memory.memory1[arr[0]].page[arr[1]])));
+//        }
 
 //        Memory.Display();
 
@@ -189,144 +195,412 @@ public class Main {
 
         // switch cases showing, in which every instruction is passed as a hex string , 0xFF ensures that the value staying with in byte limit
         opcode = "";
-        Memory.pc = SPRs.code_reg[0];
-        while (!(Memory.pc >= SPRs.code_reg[2]) || !(Memory.memory[Memory.pc] == (byte)Byte.parseByte("f3"))){
-
-            opcode = Integer.toHexString(Byte.toUnsignedInt(Memory.memory[Memory.pc]) & 0xFF);
+//        Memory.pc = SPRs.code_reg[0];
+        SPRs.toSPRS(Runningpcb.SPRs);
+        for(int index = 0 ; index < 16 ; index++){
+            GPRS.gprs[index] = Runningpcb.GPRS[index];
+        }
+        SPRs.code_reg[0] = Runningpcb.SPRs[1];
+        SPRs.code_reg[1] = Runningpcb.SPRs[2];
+        SPRs.code_reg[2] = SPRs.code_reg[0]; // <---pc
+        int[] arr = Memory.tranlation(SPRs.code_reg[2]);
+        while ((SPRs.code_reg[2] <= SPRs.code_reg[1]) || !(Memory.memory1[arr[0]].page[arr[1]] == (byte)Byte.parseByte("f3"))){
+            arr = Memory.tranlation(SPRs.code_reg[2]);
+            opcode = Integer.toHexString(Byte.toUnsignedInt(Memory.memory1[arr[0]].page[arr[1]]) & 0xFF);
             switch (opcode) {
                 case "16":
-                    Memory.pc++;
-                    operations.Move(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
-                    Memory.pc += 2;
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    String R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    String R2 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    operations.Move(R1, R2);
+                    SPRs.code_reg[2] += 2;
                     break;
                 case "17":
-                    Memory.pc++;
-                    operations.Add(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
-                    Memory.pc += 2;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    R2 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    operations.Add(R1,R2);
+                    SPRs.code_reg[2] += 2;
                     break;
                 case "18":
-                    Memory.pc++;
-                    operations.Sub(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
-                    Memory.pc += 2;
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    R2 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    operations.Sub(R1,R2);
+                    SPRs.code_reg[2] += 2;
                     break;
                 case "19":
-                    Memory.pc++;
-                    operations.Mul(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
-                    Memory.pc += 2;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    R2 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    operations.Mul(R1,R2);
+                    SPRs.code_reg[2] += 2;
                     break;
                 case "1A":
-                    Memory.pc++;
-                    operations.Div(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
-                    Memory.pc += 2;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    R2 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    operations.Div(R1,R2);
+                    SPRs.code_reg[2] += 2;
                     break;
                 case "1B":
-                    Memory.pc++;
-                    operations.And(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
-                    Memory.pc += 2;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    R2 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    operations.And(R1,R2);
+                    SPRs.code_reg[2] += 2;
                     break;
                 case "1C":
-                    Memory.pc++;
-                    operations.Or(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), Integer.toHexString(Memory.memory[Memory.pc + 1] & 0xFF));
-                    Memory.pc += 2;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    R2 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    operations.Or(R1,R2);
+                    SPRs.code_reg[2] += 2;
                     break;
                 case "30":
-                    Memory.pc++;
-                    operations.Movi(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1] & 0xFF) )+ Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2] & 0xFF))));
-                    Memory.pc += 3;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    int S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 2);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    int S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    short S_combined = (short) (S1+S2);
+
+                    operations.Movi(R1,S_combined );
+                    SPRs.code_reg[2] += 3;
                     break;
                 case "31":
-                    Memory.pc++;
-                    operations.Addi(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1]& 0xFF)) + Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2]& 0xFF))));
-                    Memory.pc += 3;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 2);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined = (short) (S1+S2);
+
+                    operations.Addi(R1,S_combined);
+                    SPRs.code_reg[2] += 3;
                     break;
                 case "32":
-                    Memory.pc++;
-                    operations.Subi(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1]& 0xFF)) + Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2]& 0xFF))));
-                    Memory.pc += 3;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 2);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined = (short) (S1+S2);
+
+                    operations.Subi(R1, S_combined);
+                    SPRs.code_reg[2] += 3;
                     break;
                 case "33":
-                    Memory.pc++;
-                    operations.Muli(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1]& 0xFF)) + Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2]& 0xFF))));
-                    Memory.pc += 3;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 2);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined = (short) (S1+S2);
+
+                    operations.Muli(R1, S_combined);
+                    SPRs.code_reg[2] += 3;
                     break;
                 case "34":
-                    Memory.pc++;
-                    operations.Divi(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1]& 0xFF)) + Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2]& 0xFF))));
-                    Memory.pc += 3;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 2);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined = (short) (S1+S2);
+
+                    operations.Divi(R1, S_combined);
+                    SPRs.code_reg[2] += 3;
                     break;
                 case "35":
-                    Memory.pc++;
-                    operations.Andi(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1]& 0xFF)) + Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2]& 0xFF))));
-                    Memory.pc += 3;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 2);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined = (short) (S1+S2);
+
+                    operations.Andi(R1,S_combined);
+                    SPRs.code_reg[2] += 3;
                     break;
                 case "36":
-                    Memory.pc++;
-                    operations.Ori(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF), (short) (Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 1]& 0xFF)) + Byte.toUnsignedInt((byte)(Memory.memory[Memory.pc + 2]& 0xFF))));
-                    Memory.pc += 3;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 2);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined = (short) (S1+S2);
+
+                    operations.Ori(R1, S_combined);
+                    SPRs.code_reg[2] += 3;
                     break;
                 case "37":
-                    Memory.pc++;
-                    operations.BZ((short)(Byte.toUnsignedInt(Memory.memory[Memory.pc])));
+                    SPRs.code_reg[2]++;
+//                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined = (short) (S1+S2);
+                    operations.BZ(S_combined);
+//                    SPRs.code_reg[2] += 2;
+
+                    break;
                 case "38":
-                    Memory.pc++;
-                    operations.BNZ((short)(Byte.toUnsignedInt(Memory.memory[Memory.pc])));
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined = (short) (S1+S2);
+
+                    operations.BNZ(S_combined);
+                    break;
                 case "39":
-                    Memory.pc++;
-                    operations.BC((short)(Byte.toUnsignedInt(Memory.memory[Memory.pc])));
-                case "3A":
-                    Memory.pc++;
-                    operations.BS((short)(Byte.toUnsignedInt(Memory.memory[Memory.pc])));
-                case "3B":
-                    Memory.pc++;
-                    operations.JMP((short)(Byte.toUnsignedInt(Memory.memory[Memory.pc])));
-                    Memory.pc++;
-//                case "3D":
-//                    Memory.pc++;
-//                    operations.Act((short) (Integer.parseInt(mem.mem_hex[Memory.pc])));
-//                    Memory.pc++;
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined = (short) (S1+S2);
+
+                    operations.BC(S_combined);
+                    break;
+                case "3a":
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined = (short) (S1+S2);
+                    operations.BS(S_combined);
+                    break;
+                case "3b":
+                    SPRs.code_reg[2]++;
+                    SPRs.code_reg[2]++; // since Register is not used
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined = (short) (S1+S2);
+                    operations.JMP(S_combined);
+//                    SPRs.code_reg[2]++;
+                    break;
+                case"3c":
+                    SPRs.code_reg[2]++;
+                    SPRs.code_reg[2]++; // since Register is not used
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined = (short) (S1+S2);
+
+                    operations.CALL(S_combined);
+                    break;
+//                case "3d":
+//                    SPRs.code_reg[2]++;
+//                    operations.Act((short) (Integer.parseInt(mem.mem_hex[SPRs.code_reg[2]])));
+//                    SPRs.code_reg[2]++;
                 case "51":
-                    Memory.pc++;
-                    operations.MOVL(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF),(Memory.memory[Memory.pc] & 0xFF));
-                    Memory.pc++;
-                    Memory.pc++;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 2);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    int S_combined_1 =  (S1+S2);
+
+                    operations.MOVL(R1,S_combined_1);
+                    SPRs.code_reg[2]++;
+                    SPRs.code_reg[2]++;
+                    SPRs.code_reg[2]++;
+                    break;
                 case "52":
-                    Memory.pc++;
-                    operations.MOVS(Integer.toHexString(Memory.memory[Memory.pc] & 0xFF),(Memory.memory[Memory.pc] & 0xFF));
-                    Memory.pc++;
-                    Memory.pc++;
+                    SPRs.code_reg[2]++;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    R1 = Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]] & 0xFF);
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 1);
+                    S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
+
+                    arr = Memory.tranlation(SPRs.code_reg[2] + 2);
+//                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
+                    S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
+
+                    S_combined_1 =  (S1+S2);
+
+                    operations.MOVS(R1,S_combined_1);
+                    SPRs.code_reg[2]++;
+                    SPRs.code_reg[2]++;
+                    SPRs.code_reg[2]++;
+                    break;
                 case "71":
-                    Memory.pc++;
-                    operations.SHL(Integer.toHexString(Memory.memory[Memory.pc]));
-                    Memory.pc += 1;
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    operations.SHL(Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]]));
+                    SPRs.code_reg[2] += 1;
                     break;
                 case "72":
-                    Memory.pc++;
-                    operations.SHR(Integer.toHexString(Memory.memory[Memory.pc]));
-                    Memory.pc += 1;
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    operations.SHR(Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]]));
+                    SPRs.code_reg[2] += 1;
                     break;
                 case "73":
-                    Memory.pc++;
-                    operations.RTL(Integer.toHexString(Memory.memory[Memory.pc]));
-                    Memory.pc += 1;
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    operations.RTL(Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]]));
+                    SPRs.code_reg[2] += 1;
                     break;
                 case "74":
-                    Memory.pc++;
-                    operations.RTR(Integer.toHexString(Memory.memory[Memory.pc]));
-                    Memory.pc += 1;
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    operations.RTR(Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]]));
+                    SPRs.code_reg[2] += 1;
                     break;
                 case "75":
-                    Memory.pc++;
-                    operations.INC(Integer.toHexString(Memory.memory[Memory.pc]));
-                    Memory.pc += 1;
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    operations.INC(Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]]));
+                    SPRs.code_reg[2] += 1;
                     break;
                 case "76":
-                    Memory.pc++;
-                    operations.DEC(Integer.toHexString(Memory.memory[Memory.pc]));
-                    Memory.pc += 1;
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    operations.DEC(Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]]));
+                    SPRs.code_reg[2] += 1;
                     break;
+                case "77":
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+                    operations.PUSH(Integer.toHexString(Memory.memory1[arr[0]].page[arr[1]]));
+                    SPRs.code_reg[2] += 1;
+                    break;
+
+                case "78":
+                    SPRs.code_reg[2]++;
+                    arr = Memory.tranlation(SPRs.code_reg[2]);
+//                    Memory.memory1[arr[0]].page[arr[1]] = operations.POP();
+                    GPRS.gprs[Memory.memory1[arr[0]].page[arr[1]]] = operations.POP();
+                    SPRs.code_reg[2] += 1;
+                    break;
+
+                case "f1":
+                    SPRs.code_reg[2]++;
+                    SPRs.code_reg[2] = operations.POP();
+                    break;
+
                 case "f2":
                     operations.NOOP();
-                    Memory.pc++;
+                    SPRs.code_reg[2]++;
                     break;
                 case "f3":
                     System.out.println("----------------------------------------------------------------------------------------------------");
@@ -337,6 +611,10 @@ public class Main {
                     SPRs.display_sprs();
                     System.exit(0);
                     break;
+
+                default:
+                    System.out.println("opcode Invalid");
+                    System.exit(0);
             }
         }
     }

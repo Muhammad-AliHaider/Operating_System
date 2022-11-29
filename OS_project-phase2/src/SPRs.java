@@ -91,4 +91,26 @@ public class SPRs{
 
 
     }
+
+    public static void toSPRS(short[] sprs1){
+         zero = sprs1[0]  ;
+         code_reg[0] = sprs1[1] ;
+         code_reg[1] = sprs1[2] ;
+         code_reg[2] = sprs1[3]  ;
+         stack_reg[0] = sprs1[4] ;
+        stack_reg[1] = sprs1[5] ;
+        stack_reg[2] = sprs1[6]  ;
+        data_reg[0] = sprs1[7]  ;
+        data_reg[1] = sprs1[8]  ;
+        register_future[0] = sprs1[9] ;
+        register_future[1] = sprs1[10] ;
+        register_future[2] = sprs1[11];
+        register_future[3] = sprs1[12];
+        register_future[4] = sprs1[13];
+        register_future[5] = sprs1[14] ;
+        flag = sprs1[15] ;
+
+
+
+    }
 }
