@@ -72,8 +72,6 @@ public class Main {
                 int total_size = process_size - 8 + 50;
                 int page_numbers = (int)(total_size/128);
 
-                System.out.println(file[o].getName() + " " + page_numbers + " " + process_size);
-
 //              -----------------------------------------------------------------------------------------------------------------------
 //                System.out.println("data");
                 count = 0;
@@ -164,38 +162,10 @@ public class Main {
         }
 
         PCB Runningpcb = Scheduling.priority();
-        System.out.println(Runningpcb.File_name);
-//        System.out.println(Runningpcb.SPRs[1]);
 //        Runningpcb = Scheduling.priority();
-//        System.out.println(Runningpcb.File_name);
+//        Runningpcb = Scheduling.priority();
+        System.out.println(Runningpcb.File_name);
 
-//        System.out.println(Runningpcb.process_pri);
-
-//        Memory.Display();
-
-//        for(int i = (int)Runningpcb.SPRs[1] ; i < (int) Runningpcb.SPRs[2] ; i++){
-//            int[] arr = Memory.tranlation(i);
-////            System.out.println(Runningpcb.SPRs[1]);
-////            System.out.println(arr[0]);
-////            System.out.println(arr[1]);
-//            System.out.println(Integer.toHexString(Byte.toUnsignedInt(Memory.memory1[arr[0]].page[arr[1]])));
-//        }
-
-//        Memory.Display();
-
-
-
-
-//        for(int i = 0  ; i <3 ; i++){
-//            PCB Runningpcb = Scheduling.priority();
-//            System.out.println(Runningpcb.File_name);
-//        }
-
-
-
-        // switch cases showing, in which every instruction is passed as a hex string , 0xFF ensures that the value staying with in byte limit
-        opcode = "";
-//        Memory.pc = SPRs.code_reg[0];
         SPRs.toSPRS(Runningpcb.SPRs);
         for(int index = 0 ; index < 16 ; index++){
             GPRS.gprs[index] = Runningpcb.GPRS[index];
@@ -204,9 +174,10 @@ public class Main {
         SPRs.code_reg[1] = Runningpcb.SPRs[2];
         SPRs.code_reg[2] = SPRs.code_reg[0]; // <---pc
         int[] arr = Memory.tranlation(SPRs.code_reg[2]);
-        while ((SPRs.code_reg[2] <= SPRs.code_reg[1]) || !(Memory.memory1[arr[0]].page[arr[1]] == (byte)Byte.parseByte("f3"))){
+        while ((SPRs.code_reg[2] <= SPRs.code_reg[1]) ){
             arr = Memory.tranlation(SPRs.code_reg[2]);
             opcode = Integer.toHexString(Byte.toUnsignedInt(Memory.memory1[arr[0]].page[arr[1]]) & 0xFF);
+
             switch (opcode) {
                 case "16":
                     SPRs.code_reg[2]++;
@@ -254,7 +225,7 @@ public class Main {
                     operations.Mul(R1,R2);
                     SPRs.code_reg[2] += 2;
                     break;
-                case "1A":
+                case "1a":
                     SPRs.code_reg[2]++;
 
                     arr = Memory.tranlation(SPRs.code_reg[2]);
@@ -266,7 +237,7 @@ public class Main {
                     operations.Div(R1,R2);
                     SPRs.code_reg[2] += 2;
                     break;
-                case "1B":
+                case "1b":
                     SPRs.code_reg[2]++;
 
                     arr = Memory.tranlation(SPRs.code_reg[2]);
@@ -278,7 +249,7 @@ public class Main {
                     operations.And(R1,R2);
                     SPRs.code_reg[2] += 2;
                     break;
-                case "1C":
+                case "1c":
                     SPRs.code_reg[2]++;
 
                     arr = Memory.tranlation(SPRs.code_reg[2]);
@@ -434,6 +405,7 @@ public class Main {
                     break;
                 case "38":
                     SPRs.code_reg[2]++;
+                    SPRs.code_reg[2]++;
                     arr = Memory.tranlation(SPRs.code_reg[2]);
                     S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
 
@@ -447,6 +419,7 @@ public class Main {
                     break;
                 case "39":
                     SPRs.code_reg[2]++;
+                    SPRs.code_reg[2]++;
                     arr = Memory.tranlation(SPRs.code_reg[2]);
                     S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
 
@@ -459,6 +432,7 @@ public class Main {
                     operations.BC(S_combined);
                     break;
                 case "3a":
+                    SPRs.code_reg[2]++;
                     SPRs.code_reg[2]++;
                     arr = Memory.tranlation(SPRs.code_reg[2]);
                     S1 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) )) ;
@@ -535,7 +509,10 @@ public class Main {
 //                    + Byte.toUnsignedInt((byte)(Memory.memory[SPRs.code_reg[2] + 2] & 0xFF))
                     S2 =  (Byte.toUnsignedInt((byte)(Memory.memory1[arr[0]].page[arr[1]] & 0xFF) ));
 
-                    S_combined_1 =  (S1+S2);
+                    String S_combined_1_1 = Integer.toString(S1);
+                    String S_combined_1_2 = ISA.convert(S2);
+
+                    S_combined_1 = Integer.parseInt(Integer.toString(Integer.decode(S_combined_1_1+S_combined_1_2))) ;
 
                     operations.MOVS(R1,S_combined_1);
                     SPRs.code_reg[2]++;
@@ -589,14 +566,17 @@ public class Main {
                     SPRs.code_reg[2]++;
                     arr = Memory.tranlation(SPRs.code_reg[2]);
 //                    Memory.memory1[arr[0]].page[arr[1]] = operations.POP();
-                    GPRS.gprs[Memory.memory1[arr[0]].page[arr[1]]] = operations.POP();
+                    int a = Integer.parseInt(Integer.toString(Integer.decode(Byte.toString(Memory.memory1[arr[0]].page[arr[1]]))));
+                    GPRS.gprs[a] = (short)(Integer.parseInt(Integer.toString(Integer.decode("0x"+operations.POP()))));
                     SPRs.code_reg[2] += 1;
                     break;
 
                 case "f1":
                     SPRs.code_reg[2]++;
                     SPRs.code_reg[2] = operations.POP();
+//                    System.out.println("hello");
                     break;
+
 
                 case "f2":
                     operations.NOOP();
@@ -611,6 +591,8 @@ public class Main {
                     SPRs.display_sprs();
                     System.exit(0);
                     break;
+
+
 
                 default:
                     System.out.println("opcode Invalid");

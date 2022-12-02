@@ -29,8 +29,8 @@ public static PCB priority()
     return queue1.dequeue();
 }
 
-public void Round_robin(){
-
+public static PCB Round_robin(){
+    return queue2.dequeue();
 }
 
 }
