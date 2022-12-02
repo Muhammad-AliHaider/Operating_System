@@ -10,10 +10,13 @@ public class Memory {
     }
     public static void Display(){
         for(int o = 0 ; o < 512 ; o++) {
-            System.out.println("page # " + o);
+            System.out.println();
+            System.out.println("page # " + o + ": ");
             for (int i = 0; i < 128; i++) {
-                System.out.println(Integer.toHexString(Byte.toUnsignedInt(Memory.memory1[o].page[i])));
+                System.out.print(Integer.toHexString(Byte.toUnsignedInt(Memory.memory1[o].page[i])) + ", ");
             }
+            System.out.println();
+
         }
     }
 

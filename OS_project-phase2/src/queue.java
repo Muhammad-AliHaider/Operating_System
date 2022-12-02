@@ -34,31 +34,6 @@ public int len(){
 }
 
 
-    public void sortList() {
-        //Node current will point to head
-        Node current = head, index = null;
-
-        if(head == null) {
-            return;
-        }
-        else {
-            while(current != null) {
-                //Node index will point to node next to current
-                index = current.next;
-
-                while(index != null) {
-                    //If current node's data is greater than index's node data, swap the data between them
-                    if(current.pcb.process_pri < index.pcb.process_pri) {
-                        Node temp = new Node(current.pcb);
-                        current.pcb = index.pcb;
-                        index.pcb = temp.pcb;
-                    }
-                    index = index.next;
-                }
-                current = current.next;
-            }
-        }
-    }
 
     public void insertInOrder(PCB DATA) //In ASCENDING order
     {

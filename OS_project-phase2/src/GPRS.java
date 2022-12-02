@@ -14,10 +14,10 @@ public class GPRS {
         }
     }
 //    just for checking
-//    public void show_in_hex(){
-//        for(int i = 0 ; i < 16; i++)
-//            System.out.println( Integer.toHexString(i) + " = " + gprs[i] );
-//    }
+    public static void show_in_hex(){
+        for(int i = 0 ; i < 16; i++)
+            System.out.println( i + " = " + Integer.toHexString(gprs[i]) );
+    }
 
 
 
