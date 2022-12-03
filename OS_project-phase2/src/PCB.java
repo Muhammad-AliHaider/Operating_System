@@ -10,6 +10,9 @@ public class PCB {
 
     public int[] page_table;
 
+    int executionTime = 0;
+    int waitingTime = 0;
+
 
     public PCB(int P_id,int P_pri,int P_size, int data_size, String Name, short[] SPRs, short[] GPRs){
         this.processID = P_id;
@@ -30,6 +33,14 @@ public class PCB {
         this.GPRS = GPRs;
         this.page_table = frame;
 
+    }
+
+    public void Update_waiting_time(){
+        this.waitingTime+=2;
+    }
+
+    public void Update_execution_time(){
+        this.executionTime+=2;
     }
 
 

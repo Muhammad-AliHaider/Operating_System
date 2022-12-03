@@ -11,12 +11,13 @@ public class GPRS {
             {
                 System.out.println("R" + (i)   + " = " + Short.toString((short)(gprs[i]-(short)(255))) + " | 255 " );
             }
+
         }
     }
 //    just for checking
     public static void show_in_hex(){
         for(int i = 0 ; i < 16; i++)
-            System.out.println( i + " = " + Integer.toHexString(gprs[i]) );
+            System.out.println( "R" + i + " = " + Integer.toHexString(gprs[i]) );
     }
 
 

@@ -18,8 +18,16 @@ public void insert(PCB pcb) {
 
 public PCB dequeue(){
 //    System.out.println(len());
-    PCB x = head.pcb;
+    PCB x = null;
+    if (head == tail){
+    x = head.pcb;
     head = head.next;
+    tail = tail.next;
+    }
+    else{
+        x = head.pcb;
+        head = head.next;
+    }
     return x;
 }
 
@@ -73,6 +81,14 @@ public int len(){
 
             }
         }
+    }
+
+    public void Update_Waiting_Time_PCB(){
+    Node temp_node = head;
+    while(temp_node != null){
+        temp_node.pcb.Update_waiting_time();
+        temp_node = temp_node.next;
+    }
     }
 
 

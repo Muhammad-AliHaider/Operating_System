@@ -8,6 +8,13 @@ public class ISA {
         return (short)(Byte.toUnsignedInt(a) + Byte.toUnsignedInt(b));
     }
 
+
+    public boolean is_stack_full(){
+        if (SPRs.stack_reg[2] >=SPRs.stack_reg[1]){
+            return true;
+        }
+        return false;
+    }
     public void Reset_flag() // setting the 4th flag bit on , indicating that flag bit it unused  
     {
         SPRs.set_flag(4);
@@ -431,17 +438,6 @@ public class ISA {
     }
 
     public void CALL(short num){
-//        int[] arr = Memory.tranlation(SPRs.stack_reg[2]);
-//        return(Memory.memory1[arr[0]].page[arr[1]]);
-//        Memory.memory1[arr[0]].page[arr[1]] = (byte)SPRs.code_reg[2];
-//        SPRs.stack_reg[2]++;
-//
-//        arr = Memory.tranlation(SPRs.stack_reg[2]);
-//        return(Memory.memory1[arr[0]].page[arr[1]]);
-//        Memory.memory1[arr[0]].page[arr[1]] = (byte)SPRs.code_reg[2];
-//        SPRs.stack_reg[2]++;
-
-
         int[] arr1;
 //        short r1 = GPRS.gprs[index];
         String temp = Integer.toHexString(Short.toUnsignedInt(SPRs.code_reg[2]));

@@ -20,19 +20,26 @@ public class Memory {
         }
     }
 
-    public static void store(int offset, int page_number){
-
-    }
-
-    public static void load(int offset,int page_number){
-
-    }
 
      public static int[] tranlation(int x){
         int frame_number = (int)(x/128);
         int offset = (int)(x%128);
         int[] set = {frame_number, offset};
         return set;
+     }
+
+     public static void print_memory_dump(){
+            System.out.println("----------------------------------------------------------------------------------------------------");
+            System.out.println("GPRS");
+            GPRS.show_in_hex();
+            System.out.println("----------------------------------------------------------------------------------------------------");
+            System.out.println("SPRS");
+            SPRs.display_sprs();
+
+            System.out.println("---------------------------------------------------------------------------");
+            System.out.println("Memory_DUMP: \n");
+            Memory.Display();
+            System.out.println("---------------------------------------------------------------------------");
      }
 
 }
